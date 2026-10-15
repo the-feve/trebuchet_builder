@@ -49,7 +49,40 @@
   #theme { flex:none; padding:5px 12px; font:500 12px system-ui, -apple-system, sans-serif; color:var(--muted);
     background:transparent; border:1px solid var(--line); border-radius:6px; cursor:pointer; }
   #theme:hover { color:var(--ink); border-color:var(--muted); }
-  main { flex:1 1 auto; min-height:0; display:grid; grid-template-columns:340px minmax(0,1fr); }
+  main { flex:1 1 auto; min-height:0; display:grid; grid-template-columns:var(--formw, 340px) 0 minmax(0,1fr); }
+  /* Drag handles (as in Rocket Builder): between the form and the 3D view, and between the view and the report. */
+  #splitter { position:relative; z-index:5; width:0; cursor:col-resize; touch-action:none; }
+  #splitter::before { content:""; position:absolute; top:0; bottom:0; left:-5px; width:10px; }
+  #splitter::after { content:""; position:absolute; top:50%; left:-3px; width:6px; height:44px; margin-top:-22px; border-radius:3px;
+    background:var(--line); border:1px solid var(--panel); transition:background .15s; }
+  #splitter:hover::after, #splitter.drag::after, #splitter:focus-visible::after { background:var(--accent); }
+  #splitter:focus-visible { outline:none; }
+  body.dragging, body.dragging * { cursor:col-resize !important; user-select:none !important; }
+  body.dragging #view canvas, body.vdragging #view canvas { pointer-events:none; }
+  #vsplit { position:relative; z-index:5; height:0; cursor:row-resize; touch-action:none; }
+  #vsplit::before { content:""; position:absolute; left:0; right:0; top:-5px; height:10px; }
+  #vsplit::after { content:""; position:absolute; left:50%; top:-3px; height:6px; width:44px; margin-left:-22px; border-radius:3px;
+    background:var(--line); border:1px solid var(--panel); transition:background .15s; }
+  #vsplit:hover::after, #vsplit.drag::after, #vsplit:focus-visible::after { background:var(--accent); }
+  #vsplit:focus-visible { outline:none; }
+  #vsplit:has(+ #report:empty) { display:none; }
+  #right.sized #report { height:var(--reporth); max-height:none !important; }
+  body.vdragging, body.vdragging * { cursor:row-resize !important; user-select:none !important; }
+  /* Switch between the two builders */
+  header nav.apps { padding:2px; border:1px solid var(--line); border-radius:8px; gap:2px; }
+  header nav.apps a { padding:3px 10px; border-radius:6px; font-weight:600; font-size:13px; }
+  header nav.apps a.cur { background:var(--ink); color:var(--bg); }
+  header nav.apps a:hover { text-decoration:none; }
+  header nav.apps a:not(.cur):hover { background:var(--card); }
+  /* Big order buttons (as in Rocket Builder's report) */
+  .orderrow { grid-column:1/-1; display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px; }
+  .orderrow a { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:10px; text-decoration:none; font-weight:700; font-size:15px; }
+  .orderrow a small { display:block; font-weight:500; font-size:12.5px; opacity:.85; }
+  .orderrow svg { flex:none; width:30px; height:30px; }
+  .orderrow .supplies { background:#f5a524; color:#1d1d1f; }
+  .orderrow .throwpage { background:var(--accent); color:var(--accent-ink); }
+  .orderrow a:hover { filter:brightness(1.06); }
+  .buy { white-space:nowrap; font-size:12px; font-weight:600; }
   #form { overflow-y:auto; -webkit-overflow-scrolling:touch; padding:8px 14px 16px calc(14px + var(--safe-l)); background:var(--panel); border-right:1px solid var(--line); }
   fieldset { border:none; border-top:1px solid var(--line); margin:10px 0 0; padding:8px 0 0; min-width:0; }
   legend { font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); padding:0 6px 0 0; }
@@ -99,7 +132,7 @@
   .choices svg { width:46px; height:46px; display:block; color:var(--ink); }
   .choices small { color:var(--muted); font-weight:500; }
 
-  #right { display:grid; grid-template-rows:minmax(0,1fr) auto; min-width:0; min-height:0; }
+  #right { display:grid; grid-template-rows:minmax(0,1fr) 0 auto; min-width:0; min-height:0; }
   #view { position:relative; min-height:0; min-width:0; overflow:hidden; background:linear-gradient(var(--view-top),var(--view-bot));
     -webkit-user-select:none; user-select:none; }
   #view canvas { position:absolute; inset:0; width:100% !important; height:100% !important; display:block; touch-action:none; }
@@ -146,6 +179,16 @@
   #guide p { margin:4px 0; } #guide .cols { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:0 24px; }
   #guide dl { margin:4px 0; } #guide dt { font-weight:600; margin-top:6px; } #guide dd { margin:0 0 0 14px; color:var(--muted); }
   #guide svg { width:100%; max-width:560px; height:auto; display:block; color:var(--ink); }
+  #guide .gnav { display:flex; flex-wrap:wrap; gap:4px 12px; font-size:12px; margin:2px 0 8px; }
+  #guide .gsupport { padding:6px 10px; border-left:3px solid #f5a524; background:var(--card); border-radius:4px; }
+  #guide figure { margin:6px 0 10px; } #guide figcaption { font-size:11.5px; color:var(--muted); }
+  #guide h3 { scroll-margin-top:8px; }
+  #guide .cols2 { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:0 24px; }
+  #guide .gtable { font-size:13px; margin:4px 0 8px; } #guide .gtable td:first-child { width:38%; }
+  #guide .eg { font-family:ui-monospace, monospace; background:var(--chip); padding:0 4px; border-radius:3px; }
+  .steps4 { display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:8px; margin:8px 0 4px; padding:0; list-style:none; counter-reset:s; }
+  .steps4 li { counter-increment:s; border:1px solid var(--line); border-radius:8px; padding:8px 10px; font-size:13px; background:var(--card); margin:0; }
+  .steps4 li::before { content:counter(s); display:inline-grid; place-items:center; width:20px; height:20px; margin-right:6px; border-radius:50%; background:var(--ink); color:var(--bg); font-size:11px; font-weight:700; }
   #guide .close { float:right; flex:none; padding:3px 10px; font:500 12px system-ui; border:1px solid var(--line); color:var(--ink); background:transparent; }
 
   @media (max-width:800px) {
@@ -158,6 +201,8 @@
     .actions { bottom:0; padding-bottom:calc(8px + var(--safe-b)); z-index:2; }
     #status { max-width:calc(100% - 24px); top:auto; bottom:10px; }
     header nav .long { display:none; }
+    #splitter, #vsplit { display:none; }
+    #right.sized #report { height:auto; }
     #guide { position:fixed; z-index:50; inset:calc(8px + var(--safe-t)) 8px calc(8px + var(--safe-b)) 8px; box-shadow:0 10px 40px rgba(0,0,0,.45); }
     #guide .close { position:sticky; top:0; min-height:36px; }
   }
@@ -179,7 +224,7 @@
 </script>
 </head>
 <body class="beginner">
-<header><h1>Trebuchet Builder</h1><nav><a href="https://quiverdesignworks.net/#apps">← Quiver<span class="long"> Design Works</span></a><a class="long" href="https://rocket.quiverdesignworks.net/">Rocket Builder</a></nav><span class="units">Beta · units mm</span><button id="theme" type="button"></button></header>
+<header><h1>Trebuchet Builder</h1><nav class="apps" aria-label="Builders"><a href="https://rocket.quiverdesignworks.net/">Rocket Builder</a><a href="https://trebuchet.quiverdesignworks.net/" class="cur" aria-current="page">Trebuchet Builder</a></nav><nav><a href="https://quiverdesignworks.net/#apps" class="long">← Quiver Design Works</a><a href="supplies" target="_blank" title="Bearings, bolts, string, counterweight fill, projectiles and filament">Order Trebuchet Supplies</a></nav><span class="units">Beta · units mm</span><button id="theme" type="button"></button></header>
 <main>
   <form id="form" autocomplete="off">
     <div id="modebar" role="group" aria-label="Mode">
@@ -239,6 +284,7 @@
     </div>
     <p class="note">Files are for your personal use: print them for yourself, don't share or sell them. <a href="terms" target="_blank">Terms</a></p>
   </form>
+  <div id="splitter" role="separator" aria-orientation="vertical" aria-label="Resize the design panel" tabindex="0" title="Drag to resize; double-click to reset"></div>
   <section id="right">
     <div id="view">
       <div id="progress" hidden><div></div></div>
@@ -250,8 +296,9 @@
       </div>
       <div id="guide">
         <button type="button" class="close" id="guideclose">Close</button>
-        <h2>Build your own trebuchet</h2>
-        <p>A <b>trebuchet</b> is a medieval siege machine: a heavy weight falls, swings a long arm, and a sling on the end of the arm flings a stone. This one is desk-sized: you print the parts, add a few screws, a bolt, some string, and it throws a small ball several metres.</p>
+        <h2>Trebuchet Builder: user guide</h2>
+        <nav class="gnav" aria-label="Guide sections"><a href="#g-start">Quick start</a><a href="#g-what">What is a trebuchet?</a><a href="#g-how">How it works</a><a href="#g-parts">Parts</a><a href="#g-print">Printing</a><a href="#g-farther">Throw farther</a><a href="#g-tune">Tuning</a><a href="#g-science">Experiments</a><a href="#g-estimate">The estimate</a><a href="#g-terms">Key terms</a><a href="#g-safety">Safety</a><a href="#g-files">Your files</a></nav>
+        <p class="gsupport">Need bearings, bolts, string or something to throw? <a href="supplies" target="_blank">Order through my link here to support me!</a></p>
         <figure>
           <svg viewBox="0 0 520 200" aria-label="Side view of a trebuchet">
             <line x1="40" y1="180" x2="480" y2="180" stroke="currentColor" stroke-width="2" opacity=".4"/>
@@ -271,43 +318,137 @@
             <path d="M330 50 a 50 50 0 0 0 -60 -26" fill="none" stroke="currentColor" stroke-width="1.2" marker-end="url(#ah)"/>
             <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
           </svg>
+          <figcaption>Side view. The counterweight falls, the arm swings up and over, and the sling whips the projectile off the end.</figcaption>
         </figure>
-        <h3>How to use this page</h3>
-        <ol>
-          <li>Go through the numbered steps on the left. The estimated throw updates as you change things.</li>
-          <li>Press <b>Build</b>: the 3D model appears with a full report underneath. Press <b>▶ Throw</b> to watch it swing.</li>
-          <li>Download the ZIP: the parts to print, a shopping list and the step-by-step build notes.</li>
+
+        <h3 id="g-start">Quick start</h3>
+        <ol class="steps4">
+          <li><b>Design.</b> Work through the numbered steps on the left. The estimated throw under <b>Build</b> updates as you go.</li>
+          <li><b>Build.</b> Press <b>Build</b>: the 3D model and a full report appear. Press <b>▶ Throw</b> to watch it swing, or open the test throw to see it to scale.</li>
+          <li><b>Print.</b> Download the ZIP: the parts to print, a shopping list, the build steps and your design file.</li>
+          <li><b>Throw.</b> Put it together, tune the release pin and measure your throws. Compare them with the estimate.</li>
         </ol>
+        <p><b>Beginner</b> shows the six steps that matter most. <b>Advanced</b> adds the arm ratio, release angle, start angle, bucket and arm sizes, axle type and infill. Drag the handles between the panels to resize them (double-click a handle to reset it).</p>
+
         <div class="cols">
           <div>
-            <h3>What makes it throw farther</h3>
+            <h3 id="g-what">What is a trebuchet?</h3>
+            <p>A trebuchet (say "TREB-yoo-shay") is a throwing machine from the Middle Ages. The first ones were pulled by teams of people; from the 1100s, builders swapped the people for a heavy box of stones or earth, the <b>counterweight trebuchet</b>. The biggest could throw stones heavier than a person a few hundred metres, and stayed in use until gunpowder took over.</p>
+            <p>A trebuchet is not a catapult in the strict sense: a catapult stores energy by bending or twisting something (a spring, a rope), while a trebuchet uses <b>gravity</b>: a weight that falls.</p>
+          </div>
+          <div>
+            <h3 id="g-how">How it works</h3>
+            <ol>
+              <li><b>Loaded:</b> the arm is held down by the trigger. The counterweight is high up, storing energy (potential energy).</li>
+              <li><b>Fire:</b> pull the trigger pin. The weight falls and the arm swings up.</li>
+              <li><b>Drag:</b> the sling pulls the projectile along the trough, then lifts it.</li>
+              <li><b>Whip:</b> the sling swings round the end of the arm, going faster than the arm itself, like the end of a whip.</li>
+              <li><b>Release:</b> the ring slides off the bent pin at the arm's tip and the projectile flies off (kinetic energy).</li>
+            </ol>
+          </div>
+        </div>
+
+        <h3 id="g-parts">The parts of your trebuchet</h3>
+        <dl class="cols2">
+          <dt>Frames (2)</dt><dd>The A-shaped sides. Each holds a skateboard bearing that the axle turns in.</dd>
+          <dt>Cross members (3) and trough</dt><dd>Join the frames at table level. The projectile and sling lie on the trough; the trigger post is on it too.</dd>
+          <dt>Arm</dt><dd>The long throwing stick. A hole for the axle, a hinge hole at the short end, a cord hole and the release-pin hole at the tip.</dd>
+          <dt>Bucket and lids</dt><dd>Holds the counterweight fill. It hangs from the short end of the arm on a bolt, so it swings freely.</dd>
+          <dt>Axle spacers (2)</dt><dd>Keep the arm in the middle of the axle.</dd>
+          <dt>Trigger pin</dt><dd>Holds the arm down through a cord loop. Pull it to fire.</dd>
+          <dt>Pin gauge</dt><dd>A wedge cut to the suggested release angle, for bending the release pin.</dd>
+          <dt>Ball</dt><dd>A printable projectile. Print a few: they get lost.</dd>
+        </dl>
+        <p>Besides the printed parts you need an M8 bolt, two 608 bearings, an M4 bolt, about 10 small screws, string, a scrap of leather, a small ring, a paper clip and the counterweight fill. The report's <b>What else you need</b> lists exact sizes for your design, with links.</p>
+
+        <div class="cols">
+          <div>
+            <h3 id="g-print">Printing tips</h3>
+            <ul>
+              <li>PLA is fine. PLA+ or PETG is tougher for the arm.</li>
+              <li>Every part is exported lying the way it should print, with no supports needed.</li>
+              <li>The arm and frames take the most force: 4 walls, 30–40% infill. Everything else: 2–3 walls, 15–20% infill.</li>
+              <li>The biggest parts are the frames and the trough. Step 2 checks they fit your bed; a longer arm needs a bigger printer.</li>
+              <li>Clean any stringy plastic out of the holes before you put it together. The bearings should press in firmly.</li>
+            </ul>
+          </div>
+          <div>
+            <h3 id="g-farther">What makes it throw farther</h3>
             <dl>
               <dt>Counterweight</dt><dd>The energy comes from the weight falling. Double the weight, roughly double the energy. Very heavy weights strain the parts.</dd>
-              <dt>Weight ratio</dt><dd>Counterweight ÷ projectile. Above about 100 : 1 the arm can't swing any faster, so extra weight helps less and less.</dd>
+              <dt>Weight ratio</dt><dd>Counterweight ÷ projectile. Above about 100 : 1 the arm can't swing much faster, so extra weight helps less and less.</dd>
               <dt>Arm ratio</dt><dd>Long side ÷ short side. Around 3.5–4.5 : 1 usually works best for a hinged counterweight.</dd>
               <dt>Sling length</dt><dd>A longer sling acts like a longer arm, but too long and it drags. Try 0.7–1.0 × the long side.</dd>
-              <dt>Release angle</dt><dd>When the ring slides off the pin. Too early and the shot goes up or backwards; too late and it hits the ground. Bend the pin to tune it; the report suggests an angle and a printed gauge helps you bend it.</dd>
+              <dt>Release angle</dt><dd>When the ring slides off the pin. The report suggests the best angle; the pin gauge helps you bend it.</dd>
               <dt>Friction</dt><dd>Bearings on the axle and a smooth trough help. A loose, wobbly machine wastes energy.</dd>
             </dl>
           </div>
+        </div>
+
+        <h3 id="g-tune">Tuning and troubleshooting</h3>
+        <table class="gtable">
+          <tr><th>What happens</th><th>What to try</th></tr>
+          <tr><td>The ball goes straight up or backwards</td><td>It lets go too early. Bend the release pin <b>straighter</b> (smaller angle).</td></tr>
+          <tr><td>The ball slams into the table or floor in front</td><td>It lets go too late. Bend the pin <b>more</b> (bigger angle).</td></tr>
+          <tr><td>The ball doesn't leave the pouch</td><td>The ring is stuck: smooth the pin, use a smaller ring, or bend the pin a little more.</td></tr>
+          <tr><td>The arm swings slowly or stops</td><td>Too much friction: loosen the axle nut slightly; check the bearings are seated and the spacers aren't rubbing.</td></tr>
+          <tr><td>The bucket hits something</td><td>Check the hinge bolt is snug but the bucket swings freely; nothing should be inside the frames below the arm.</td></tr>
+          <tr><td>Throws vary a lot</td><td>Lay the sling straight and flat every time, and use the same projectile. Take the middle of five throws.</td></tr>
+          <tr><td>A part cracked</td><td>Reprint it with more walls and infill (or PETG), or use less counterweight.</td></tr>
+        </table>
+
+        <div class="cols">
           <div>
-            <h3>Key terms</h3>
-            <dl>
-              <dt>Axle (pivot)</dt><dd>The bolt the arm swings on, held by two A-shaped frames.</dd>
-              <dt>Hinged counterweight</dt><dd>The weight hangs from a hinge instead of being fixed to the arm. It falls more straight down, so more of its energy reaches the projectile.</dd>
-              <dt>Trough</dt><dd>The flat track the projectile slides along before the sling lifts it.</dd>
-              <dt>Release pin</dt><dd>A short bent pin at the tip of the arm. One end of the sling has a ring that slides off it to let go.</dd>
-              <dt>Trigger</dt><dd>A pin and cord that hold the arm down until you pull it.</dd>
-              <dt>Efficiency</dt><dd>How much of the falling weight's energy ends up in the projectile. Good trebuchets reach 60–75%.</dd>
-            </dl>
+            <h3 id="g-science">Experiments to try</h3>
+            <ul>
+              <li><b>Counterweight:</b> throw with 200, 300 and 400 g. Does double the weight throw twice as far?</li>
+              <li><b>Sling length:</b> try a short, medium and long sling. Which works best, and does it match the report's suggestion?</li>
+              <li><b>Release angle:</b> bend the pin in 10° steps and record where it lands. Compare with the release-angle chart.</li>
+              <li><b>Projectiles:</b> a marble against a ping-pong ball. Which goes farther, and why? (Hint: air drag.)</li>
+              <li><b>Real against model:</b> measure five throws from the axle, take the middle one, and see what percentage of the model's distance you get.</li>
+            </ul>
+          </div>
+          <div>
+            <h3 id="g-estimate">About the estimate</h3>
+            <p>The page simulates the swing: the falling counterweight, the arm, the sling dragging the ball along the trough, the ball swinging free, the release and the flight with air drag. It doesn't model friction, stretchy string or a bendy arm, so real throws land shorter. The report shows the model's number and the range to <b>expect</b> (60–85% of it).</p>
+            <p>Distances are measured from the axle, landing at table height. <b>Efficiency</b> is how much of the weight's falling energy ends up in the projectile.</p>
           </div>
         </div>
-        <h3>About the estimate</h3>
-        <p>The page simulates the swing: the falling counterweight, the arm, the sling dragging the ball along the trough, the ball swinging free, the release and the flight with air drag. It doesn't model friction, stretchy string or a bendy arm, so real throws land shorter: the report shows the model's number and the range to <b>expect</b> (60–85% of it). Distances are measured from the axle, landing at table height.</p>
-        <h3>Safety</h3>
-        <p>It throws hard enough to hurt. Grown-up supervision, safety glasses, never aim at people or animals, and keep hands out of the arm's swing.</p>
+
+        <h3 id="g-terms">Key terms</h3>
+        <dl class="cols2">
+          <dt>Axle (pivot)</dt><dd>The bolt the arm swings on, held by the two frames.</dd>
+          <dt>Hinged counterweight</dt><dd>The weight hangs from a hinge instead of being fixed to the arm. It falls more straight down, so more of its energy reaches the projectile.</dd>
+          <dt>Trough</dt><dd>The flat track the projectile slides along before the sling lifts it.</dd>
+          <dt>Release pin</dt><dd>A short bent pin at the tip of the arm. One end of the sling has a ring that slides off it to let go.</dd>
+          <dt>Release angle</dt><dd>The angle between the sling and the arm when the ring slides off: set by how far the pin is bent.</dd>
+          <dt>Trigger</dt><dd>A pin and cord loop that hold the arm down until you pull it.</dd>
+          <dt>Potential energy</dt><dd>Energy stored by lifting something up. The raised counterweight has it.</dd>
+          <dt>Kinetic energy</dt><dd>Energy of motion. The flying projectile has it.</dd>
+          <dt>Efficiency</dt><dd>Kinetic energy of the projectile ÷ potential energy the weight gave up. Good trebuchets reach 60–75%.</dd>
+          <dt>Launch angle</dt><dd>How steeply the projectile leaves. Without air, 45° goes farthest; with air, a bit lower.</dd>
+        </dl>
+
+        <div class="cols">
+          <div>
+            <h3 id="g-safety">Safety</h3>
+            <ul>
+              <li>Grown-up supervision. Safety glasses for everyone nearby.</li>
+              <li>Never aim at people, animals, windows or anything breakable.</li>
+              <li>Keep hands and faces out of the arm's swing; it swings hard and fast.</li>
+              <li>Load it with the trigger in place, and only when everyone is behind the machine.</li>
+              <li>Soft or light things indoors; marbles only outdoors with a clear field.</li>
+            </ul>
+          </div>
+          <div>
+            <h3 id="g-files">Your files</h3>
+            <p>The ZIP holds the STLs, <span class="eg">build_notes.txt</span> (shopping list, print settings, steps), <span class="eg">design.json</span> and the license. The files are for your personal use: print, build and change them for yourself, but don't share, upload or sell them. <a href="terms" target="_blank">Full terms</a>.</p>
+            <p>Also by Quiver Design Works: <a href="https://rocket.quiverdesignworks.net/">Rocket Builder</a>, for 3D-printed model rockets.</p>
+          </div>
+        </div>
       </div>
     </div>
+    <div id="vsplit" role="separator" aria-orientation="horizontal" aria-label="Resize the 3D view and the report" tabindex="0" title="Drag to resize; double-click to reset"></div>
     <div id="report"></div>
   </section>
 </main>
@@ -548,6 +689,71 @@ function stepThrow() {
 }
 $('play').onclick = () => { if (!rig) return; rig.playing = true; rig.t0 = performance.now(); rig.trail.visible = false; };
 
+// ---------- resizable panels ----------
+// Drag the handles (as in Rocket Builder); sizes are remembered in this browser
+// under treb.* keys (this page can share an origin with Rocket Builder).
+// Arrow keys nudge; double-click resets.
+(() => {
+  const split = $('splitter'), mainEl = document.querySelector('main'), root = document.documentElement;
+  const MIN = 260, maxW = () => Math.max(MIN, Math.min(720, mainEl.clientWidth * 0.6));
+  const set = (w, save) => {
+    w = Math.round(Math.min(maxW(), Math.max(MIN, w)));
+    root.style.setProperty('--formw', `${w}px`);
+    if (save) { try { localStorage.setItem('treb.formWidth', String(w)); } catch {} }
+  };
+  const reset = () => { root.style.removeProperty('--formw'); try { localStorage.removeItem('treb.formWidth'); } catch {} };
+  try { const w = Number(localStorage.getItem('treb.formWidth')); if (w) set(w, false); } catch {}
+  split.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    split.setPointerCapture(e.pointerId); split.classList.add('drag'); document.body.classList.add('dragging');
+    const left = mainEl.getBoundingClientRect().left;
+    const move = ev => set(ev.clientX - left, false);
+    const up = ev => {
+      set(ev.clientX - left, true);
+      split.classList.remove('drag'); document.body.classList.remove('dragging');
+      split.removeEventListener('pointermove', move); split.removeEventListener('pointerup', up); split.removeEventListener('pointercancel', up);
+    };
+    split.addEventListener('pointermove', move); split.addEventListener('pointerup', up); split.addEventListener('pointercancel', up);
+  });
+  split.addEventListener('dblclick', reset);
+  split.addEventListener('keydown', e => {
+    const cur = form.getBoundingClientRect().width;
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); set(cur + (e.key === 'ArrowRight' ? 20 : -20), true); }
+    else if (e.key === 'Home') { e.preventDefault(); reset(); }
+  });
+  addEventListener('resize', () => { const w = parseFloat(root.style.getPropertyValue('--formw')); if (w && w > maxW()) set(w, false); });
+})();
+(() => {
+  const split = $('vsplit'), right = $('right'), root = document.documentElement;
+  const MIN = 80, maxH = () => Math.max(MIN, right.clientHeight - 140);  // keep some 3D view
+  const set = (h, save) => {
+    h = Math.round(Math.min(maxH(), Math.max(MIN, h)));
+    root.style.setProperty('--reporth', `${h}px`); right.classList.add('sized');
+    if (save) { try { localStorage.setItem('treb.reportHeight', String(h)); } catch {} }
+  };
+  const reset = () => { right.classList.remove('sized'); root.style.removeProperty('--reporth'); try { localStorage.removeItem('treb.reportHeight'); } catch {} };
+  try { const h = Number(localStorage.getItem('treb.reportHeight')); if (h) set(h, false); } catch {}
+  split.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    split.setPointerCapture(e.pointerId); split.classList.add('drag'); document.body.classList.add('vdragging');
+    const bottom = right.getBoundingClientRect().bottom;
+    const move = ev => set(bottom - ev.clientY, false);
+    const up = ev => {
+      set(bottom - ev.clientY, true);
+      split.classList.remove('drag'); document.body.classList.remove('vdragging');
+      split.removeEventListener('pointermove', move); split.removeEventListener('pointerup', up); split.removeEventListener('pointercancel', up);
+    };
+    split.addEventListener('pointermove', move); split.addEventListener('pointerup', up); split.addEventListener('pointercancel', up);
+  });
+  split.addEventListener('dblclick', reset);
+  split.addEventListener('keydown', e => {
+    const cur = reportEl.getBoundingClientRect().height;
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') { e.preventDefault(); set(cur + (e.key === 'ArrowUp' ? 30 : -30), true); }
+    else if (e.key === 'Home') { e.preventDefault(); reset(); }
+  });
+  addEventListener('resize', () => { const h = parseFloat(root.style.getPropertyValue('--reporth')); if (h && h > maxH()) set(h, false); });
+})();
+
 // ---------- guide ----------
 const guide = $('guide');
 $('guidebtn').onclick = () => { guide.hidden = !guide.hidden; };
@@ -600,7 +806,6 @@ function showReport(r) {
       <div class="big"><b>${t.expected_m[0]}–${t.expected_m[1]} m</b><span>${Math.round(t.expected_m[0] * FT)}–${Math.round(t.expected_m[1] * FT)} ft</span></div>
       <p class="muted">Expected on the table. The model, without friction, says ${m1(t.range_m)} m.</p>
       ${flightSvg(t)}
-      <p><a href="${throwLink()}" target="_blank">Watch the test throw to scale →</a></p>
       <table><tr><td>Release speed</td><td class="n">${m1(t.release_speed_ms)} m/s (${Math.round(t.release_speed_ms * 2.237)} mph)</td></tr>
       <tr><td>Launch angle</td><td class="n">${Math.round(t.launch_angle_deg)}° up</td></tr>
       <tr><td>Highest point</td><td class="n">${m1(t.peak_height_m)} m</td></tr>
@@ -615,6 +820,9 @@ function showReport(r) {
   } else {
     cards.push(`<div class="card bad"><h3>It won't throw yet</h3><p>${esc(t.problem)}</p></div>`);
   }
+  cards.push(`<div class="orderrow">
+    <a class="supplies" href="supplies" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 11h11l2-8H6.2"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg><span>Order trebuchet supplies<small>Bearings, bolts, string, fill, filament</small></span></a>
+    <a class="throwpage" href="${throwLink()}" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 20h18M5 18q7-16 15-2"/><circle cx="20" cy="16" r="1.5" fill="currentColor"/></svg><span>Watch the test throw<small>The swing and the flight, to scale</small></span></a></div>`);
   cards.push(`<div class="card"><h3>Your trebuchet</h3><table>
     <tr><td>Size</td><td class="n">${s.base_length_mm} × ${s.width_mm} mm, ${s.height_mm} mm tall</td></tr>
     <tr><td>Arm</td><td class="n">${s.long_arm_mm} + ${s.short_arm_mm} mm (${(s.long_arm_mm / s.short_arm_mm).toFixed(1)} : 1)</td></tr>
@@ -636,9 +844,11 @@ function showReport(r) {
       ${printed.map(p => `<tr><td><span class="sw" style="background:rgb(${p.color.map(c => Math.round(c * 255)).join(',')})"></span>${esc(p.name.replace(/_/g, ' '))}<br><span class="note">${esc(p.purpose)}</span></td><td class="n">${p.qty}</td><td class="n">${p.mass_g}</td><td class="n">${p.size_mm.join(' × ')}</td><td>${esc(p.print)}</td></tr>`).join('')}
       <tr><td><b>Total plastic</b></td><td></td><td class="n"><b>${r.plastic_g}</b></td><td></td><td></td></tr></table></div>`);
   }
-  cards.push(`<div class="card wide"><h3>What else you need</h3><table><tr><th class="n">Qty</th><th>Item</th><th>What to get</th><th>Why</th></tr>
-    ${r.bom.map(i => `<tr><td class="n">${i.qty}</td><td>${esc(i.name)}</td><td>${esc(i.spec)}</td><td class="note">${esc(i.why)}</td></tr>`).join('')}</table>
-    <p class="note">Shopping links for these are coming soon.</p></div>`);
+  const links = OPTS?.supply_links || {};
+  cards.push(`<div class="card wide"><h3>What else you need</h3><table><tr><th class="n">Qty</th><th>Item</th><th>What to get</th><th>Why</th><th></th></tr>
+    ${r.bom.map(i => `<tr><td class="n">${i.qty}</td><td>${esc(i.name)}</td><td>${esc(i.spec)}</td><td class="note">${esc(i.why)}</td>
+      <td>${(links[i.key] || []).slice(0, 1).map(l => `<a class="buy" href="${esc(l.url)}" target="_blank" rel="sponsored noopener">Find on Amazon ↗</a>`).join('')}</td></tr>`).join('')}</table>
+    <p class="note">${esc(OPTS?.disclosure || '')} Ordering through these links supports Trebuchet Builder at no extra cost to you.</p></div>`);
   cards.push(`<div class="card wide"><h3>Putting it together</h3><ol>${r.steps.map(x => `<li>${esc(x)}</li>`).join('')}</ol></div>`);
   cards.push(`<div class="card"><h3>Safety</h3><ul>${r.safety.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`);
   reportEl.innerHTML = cards.join('');

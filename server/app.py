@@ -10,6 +10,7 @@ Endpoints:
   GET  /api/builds/{id}/preview.glb      assembled model for the preview
   GET  /api/builds/{id}/trebuchet.zip    print files, build notes, design.json
   GET  /throw                            test-throw page: arm swing and flight arc
+  GET  /supplies                         Order Trebuchet Supplies (Amazon affiliate links)
 """
 
 from __future__ import annotations
@@ -38,6 +39,7 @@ from trebgen.instructions import PRINT_NOTES, SAFETY, assembly_steps
 from trebgen.params import AXLES, FILLS, PROJECTILES, DesignError, DesignParams, eff_density, in_sentence, projectile_of
 from trebgen.physics import REAL_WORLD
 
+import treb_supplies as supplies
 import treb_terms as terms
 
 GENERATOR_VERSION = "0.1.0"
@@ -236,6 +238,12 @@ def throw_page():
     return (HERE / "static" / "throw.html").read_text()
 
 
+@app.get("/supplies", response_class=HTMLResponse)
+def supplies_page():
+    """Order Trebuchet Supplies: Amazon affiliate links (treb_gear.json)."""
+    return supplies.page()
+
+
 @app.get("/terms", response_class=HTMLResponse)
 def terms_page():
     body = terms.LICENSE_TEXT.replace("&", "&amp;").replace("<", "&lt;")
@@ -256,6 +264,8 @@ def options():
         "defaults": BuildRequest().model_dump(),
         "real_world": list(REAL_WORLD),
         "license": terms.SHORT,
+        "supply_links": supplies.links_by_key(),  # shopping-list key -> Amazon links
+        "disclosure": supplies.DISCLOSURE,
     }
 
 
