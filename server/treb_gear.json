@@ -1,0 +1,87 @@
+{
+  "storeId": "quiverdesig09-20",
+  "checked": "2026-10-15",
+  "note": "Items have either an ASIN (a specific product) or a search (an Amazon search link with the Store ID). The searches are placeholders until the owner picks specific products; swap \"search\" for \"asin\" to link one. \"keys\" match the shopping list in the report (trebgen.hardware.bill_of_materials).",
+  "starterKit": {
+    "title": "Hardware kit for the desk trebuchet",
+    "intro": "Besides the printed parts, this is everything the default trebuchet needs. Most come in packs, so you'll have spares for a second build.",
+    "items": [
+      {"ref": "bearings", "why": "Two press into the frames: the smoothest axle you can get, so more throw."},
+      {"ref": "m8-bolts", "why": "The main axle. Check the length in your shopping list."},
+      {"ref": "m4-kit", "why": "The hinge bolt for the counterweight bucket, plus nuts and washers."},
+      {"ref": "m3-screws", "why": "Hold the frames, cross members and trough together."},
+      {"ref": "braided-line", "why": "The sling cords: strong and doesn't stretch."},
+      {"ref": "leather", "why": "A small piece makes the sling pouch."},
+      {"ref": "split-rings", "why": "The release ring that slides off the pin."},
+      {"ref": "steel-bbs", "why": "The densest easy counterweight fill."},
+      {"ref": "glasses", "why": "For everyone near the throw."}
+    ]
+  },
+  "categories": [
+    {
+      "id": "hardware",
+      "title": "Axle and hinge hardware",
+      "intro": "The arm swings on an M8 bolt through two 608 skateboard bearings; the counterweight hangs on an M4 bolt. Lock nuts (nylon insert) stop them shaking loose.",
+      "items": [
+        {"id": "bearings", "keys": ["608_bearing"], "search": "608 2RS bearings 10 pack", "name": "608 bearings (8 × 22 × 7 mm)", "note": "Skateboard size. Get the sealed (2RS) kind; you need two.", "pick": true},
+        {"id": "m8-bolts", "keys": ["m8_bolt"], "search": "M8 hex bolts nylon lock nuts washers kit", "name": "M8 bolts, lock nuts and washers", "note": "The axle. The report says how long (90 mm for the default design); longer is fine with a washer stack."},
+        {"id": "m4-kit", "keys": ["m4_bolt"], "search": "M4 bolt nut washer assortment kit", "name": "M4 bolt, nut and washer kit", "note": "For the bucket hinge. A kit covers the lengths for every size the designer makes."},
+        {"id": "m3-screws", "keys": ["m3_screw"], "search": "M3 self tapping screws assortment for plastic", "name": "M3 self-tapping screws for plastic", "note": "10 per trebuchet. #4 × 1/2\" sheet-metal screws work too.", "pick": true}
+      ]
+    },
+    {
+      "id": "sling",
+      "title": "Sling, release and trigger",
+      "intro": "The sling is two cords and a pouch; a ring on one cord slides off the release pin to let go. A cord loop and pin hold the arm down until you fire.",
+      "items": [
+        {"id": "braided-line", "keys": ["sling_cord"], "search": "braided fishing line 20 lb", "name": "Braided fishing line, 20 lb or more", "note": "Thin, strong and barely stretches, so the release is repeatable.", "pick": true},
+        {"id": "twine", "keys": ["trigger_cord"], "search": "nylon twine braided string", "name": "Nylon twine or kite string", "note": "For the trigger loop. Any strong string works."},
+        {"id": "leather", "keys": ["pouch"], "search": "leather scraps craft pieces", "name": "Leather craft scraps", "note": "Cut a 30 × 50 mm pouch and punch a hole at each end. Felt or denim also works."},
+        {"id": "split-rings", "keys": ["ring"], "search": "small split key rings 10mm", "name": "Small split rings (10–12 mm)", "note": "The release ring. A tied loop works too, but a ring slides off more cleanly."},
+        {"id": "pins", "keys": ["release_pin"], "search": "jumbo paper clips", "name": "Large paper clips", "note": "Straighten one for the release pin (about 2 mm thick), or use a small nail."}
+      ]
+    },
+    {
+      "id": "weight",
+      "title": "Counterweight fill",
+      "intro": "The heavier the fill for its size, the smaller the bucket. Weigh it on a kitchen scale.",
+      "items": [
+        {"id": "steel-bbs", "keys": ["fill_steel_bb"], "search": "steel BBs 4.5mm", "name": "Steel BBs (4.5 mm)", "note": "Densest easy fill, and they pour. About 350 g fills the default bucket.", "pick": true},
+        {"id": "nuts-bulk", "keys": ["fill_nuts"], "search": "M8 hex nuts bulk 100 pack", "name": "Steel nuts, bulk", "note": "A box of nuts makes a tidy, reusable counterweight."},
+        {"id": "sand", "keys": ["fill_sand"], "search": "play sand small bag", "name": "Play sand", "note": "Cheap but light, so the bucket comes out bigger."},
+        {"id": "scale", "keys": ["scale"], "search": "digital kitchen scale grams", "name": "Digital kitchen scale", "note": "To weigh the fill and your projectiles: the estimate is only as good as the numbers."}
+      ]
+    },
+    {
+      "id": "projectiles",
+      "title": "Things to throw",
+      "intro": "Light and round goes farthest. The kit includes a printable ball; these are the other choices in the designer.",
+      "items": [
+        {"id": "foam-balls", "keys": ["proj_foam_ball"], "search": "small foam balls 1 inch", "name": "Small foam balls", "note": "Safe indoors.", "pick": true},
+        {"id": "ping-pong", "keys": ["proj_ping_pong"], "search": "ping pong balls", "name": "Ping-pong balls", "note": "Light and big: they slow down fast in the air. Fun indoors."},
+        {"id": "marbles", "keys": ["proj_marble"], "search": "glass marbles 16mm", "name": "Glass marbles (16 mm)", "note": "Heavy and fast. Outdoors only, with a clear field."},
+        {"id": "marshmallows", "keys": ["proj_mini_marshmallow"], "search": "mini marshmallows", "name": "Mini marshmallows", "note": "The classic desk-trebuchet ammo."}
+      ]
+    },
+    {
+      "id": "filament",
+      "title": "Filament",
+      "intro": "What I print with. The whole default trebuchet takes about 220 g. Sunlu, 1.75 mm, 1 kg spools; other colours are on each listing.",
+      "items": [
+        {"id": "pla", "keys": ["filament"], "asin": "B07XG3RM58", "name": "Sunlu PLA, 1 kg", "note": "Easiest to print and stiff: right for the frames and trough.", "pick": true},
+        {"id": "pla-plus", "keys": [], "asin": "B0DHCT8YDN", "name": "Sunlu PLA+ 2.0, 1 kg", "note": "Tougher PLA. Good for the arm, which takes the most force."},
+        {"id": "petg", "keys": [], "asin": "B0DJS3PJVX", "name": "Sunlu PETG, 1 kg", "note": "Tougher still and less brittle, if your arm or bucket ears crack."}
+      ]
+    },
+    {
+      "id": "tools",
+      "title": "Safety and testing",
+      "intro": "Glasses for the throw, and a tape to measure it: compare your throws with the estimate.",
+      "items": [
+        {"id": "glasses", "keys": ["safety_glasses"], "search": "safety glasses kids adults impact", "name": "Safety glasses", "note": "Impact-rated, for everyone near the throw.", "pick": true},
+        {"id": "tape", "keys": ["tape"], "search": "100 ft measuring tape", "name": "Long measuring tape", "note": "Measure from the axle to where it lands. Try five throws and take the middle one."},
+        {"id": "hex-keys", "keys": [], "search": "hex key and screwdriver set", "name": "Screwdriver and spanner set", "note": "For the M3 screws and the lock nuts."}
+      ]
+    }
+  ]
+}

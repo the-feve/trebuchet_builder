@@ -19,16 +19,19 @@ Trebuchet Builder: a web page where someone designs a small 3D-printable desk tr
 - `server/terms.py` is now `server/treb_terms.py`: the Rocket Builder app imports this server, and its own `terms` module would clash.
 - Tests: `geometry/tests` (13: energy conserved through the swing, sensible default throw, release angle and counterweight effects, DesignErrors, valid parts on the bed, bucket clear of the axle, bed check, BOM keys) and `server/tests` (5: options/page, plan, 422, build + GLB + ZIP, 404). CI in `.github/workflows/ci.yml`.
 
-**Hosting (owner chose 2026-10-15):** inside Rocket Builder's Fly app `rocket-fevergeon`, at `/trebuchet/` and (once DNS is set) `trebuchet.quiverdesignworks.net`. rocket-builder-web's `server/trebuchet_mount.py` loads this repo from a checkout made at deploy time (its `deploy.yml` checks out **this repo's `main`**). `.github/workflows/deploy.yml` here asks rocket-builder-web to redeploy after a push to `main` (needs `ROCKET_DEPLOY_TOKEN`; skips with a notice without it). Owner steps are in rocket-builder-web `HANDOFF.md`, Next steps 8: make a `main` branch here, add the read token there, merge its PR, DNS.
+- **Second pass (2026-10-15):** the page now matches Rocket Builder's layout: drag handles between the form and the 3D view and between the view and the report (sizes in `localStorage` as `treb.formWidth` / `treb.reportHeight`, since this page can share an origin with Rocket Builder; arrow keys nudge, double-click resets; hidden on phones). Header: a *Rocket Builder | Trebuchet Builder* switcher (`nav.apps`, also on Rocket Builder's header and supplies page, `/throw` and `/supplies`) and *Order Trebuchet Supplies*. The guide is a full user guide: quick start, what a trebuchet is, how it works, the parts, printing tips, throwing farther, a tuning/troubleshooting table, experiments, the estimate, key terms, safety, your files.
+- **Order Trebuchet Supplies (2026-10-15):** `/supplies` (`server/treb_supplies.py` + `server/treb_gear.json`, same layout as Rocket Builder's `/ordersupplies`): a hardware-kit box and six categories, Store ID `quiverdesig09-20`, the disclosure at the top and bottom, no prices or Amazon images. **Most items are Amazon search links** (`"search"`), not specific products: no product IDs were looked up. Swap `"search"` for `"asin"` to link a product (the filament items already use the rocket list's Sunlu ASINs). Items list the shopping-list `keys` they cover; `/api/options → supply_links` feeds a *Find on Amazon* link per row of the report's *What else you need*, and the report has big *Order trebuchet supplies* / *Watch the test throw* buttons. Tests: `server/tests/test_supplies.py` (every default shopping-list item has a link; every link has the Store ID).
+
+**Hosting: live since 2026-10-15** at https://trebuchet.quiverdesignworks.net (A/AAAA DNS-only in Cloudflare, same addresses as `rocket.`; Fly cert issued) and https://rocket.quiverdesignworks.net/trebuchet/, inside Rocket Builder's Fly app `rocket-fevergeon` (rocket-builder-web PR #31). rocket-builder-web's `server/trebuchet_mount.py` loads this repo from a checkout made at deploy time (its `deploy.yml` checks out **this repo's `main`**). `.github/workflows/deploy.yml` here asks rocket-builder-web to redeploy after a push to `main` (needs `ROCKET_DEPLOY_TOKEN`; skips with a notice without it). Owner setup done 2026-10-15: `main` here, `TREBUCHET_REPO_TOKEN` there (first saved in the wrong place: the deploy skipped the checkout and shipped the rocket app alone, so check its *Check out Trebuchet Builder* step if `/trebuchet/` 404s), `ROCKET_DEPLOY_TOKEN` here.
 
 Rules that follow from sharing the app: keep page URLs relative; don't add server modules whose names clash with rocket-builder-web's `server/` (`app` is loaded under another name; `terms`, `designs`, `accounts`, `orders`, `shop`, `supplies`, `notify` are taken); one 1 GB machine runs both, so keep builds light.
 
 ## Next steps (in order)
 
-1. Owner: the hosting steps above. Then open https://rocket.quiverdesignworks.net/trebuchet/ and try it on a phone.
+1. Owner: try it on a phone; pick specific products for the supplies list (each `"search"` item → an `"asin"`).
 2. Print the default design and throw it: note distance, what broke or rubbed, and set `physics.REAL_WORLD` from it (record in `docs/`).
-3. Supplies page with Amazon links (TODO step 2); the report's "What else you need" says links are coming.
-4. Saved designs / share links, then orders (reuse Rocket Builder's code; mind the module-name rule above).
+3. Wind on the test throw; saved designs / share links (TODO).
+4. Orders (reuse Rocket Builder's code; mind the module-name rule above).
 
 ## Decisions log
 

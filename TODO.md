@@ -15,8 +15,11 @@ Steps for building Trebuchet Builder up from a small printable kit. Tick them of
 
 ## Step 2: Make it a product
 - [x] Hosting: inside the Rocket Builder Fly app (code done 2026-10-15)
-- [ ] Owner: `main` branch here, `TREBUCHET_REPO_TOKEN` in rocket-builder-web, merge its PR, `trebuchet.quiverdesignworks.net` DNS + cert (rocket-builder-web HANDOFF Next steps 8)
-- [ ] Order Supplies page with Amazon affiliate links (Store ID `quiverdesig09-20`): copy rocket-builder-web `server/supplies.py` + `gear.json`; match items on `bom[].key` (m8_bolt, 608_bearing, m4_bolt, m3_screw, release_pin, sling_cord, pouch, ring, trigger_cord, fill_*, proj_*, safety_glasses). Disclosure line required.
+- [x] Owner: `main` branch here, `TREBUCHET_REPO_TOKEN` in rocket-builder-web, merge its PR, `trebuchet.quiverdesignworks.net` DNS + cert (live 2026-10-15)
+- [x] Order Supplies page with Amazon affiliate links (`/supplies`, 2026-10-15)
+- [ ] Owner: pick specific products for the search-link items in `server/treb_gear.json` (search → asin)
+- [x] Rocket Builder look: resizable panels, builder switcher in the header, full user guide (2026-10-15)
+- [x] Listed in quiverdesignworks.net Apps (2026-10-15)
 - [ ] Saved designs, share links, accounts (reuse rocket-builder-web `designs.py`, `accounts.py`)
 - [ ] Printed-kit orders through Stripe (reuse rocket-builder-web `orders.py`, `shop.py`; `metadata.store` tag for this store)
 - [ ] Link from quiverdesignworks.net apps list
