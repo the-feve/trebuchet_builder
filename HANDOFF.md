@@ -1,6 +1,14 @@
 # Handoff
 
-_Last updated 2026-10-15 (second session: the page, tests, hosting in the Rocket Builder Fly app). Read this, then `TODO.md`._
+_Last updated 2026-10-15 (end of the first sessions). Read this, then `TODO.md`._
+
+## Start here
+
+- **Live:** https://trebuchet.quiverdesignworks.net (also https://rocket.quiverdesignworks.net/trebuchet/), with `/throw` (test throw) and `/supplies` (Amazon links). Listed in quiverdesignworks.net Apps. Everything is on `main` and deployed: this repo PR #1, rocket-builder-web PRs #31–#32, quiverdesignworks-site PR #5, all merged 2026-10-15. No open PRs from these sessions.
+- **Deploys:** a push to `main` here asks rocket-builder-web to redeploy (`ROCKET_DEPLOY_TOKEN`); you can also run its *Deploy to Fly.io* workflow by hand (Actions tab → Deploy to Fly.io → Run workflow). After a deploy, check `/trebuchet/` answers; the deploy workflow does this itself.
+- **Parallel sessions** worked on the same repos (`claude/lucid-tesla-89zpzp` here was merged in: the `/throw` page). Check open PRs and `git branch -r` before starting.
+- **Waiting on the owner:** pick specific Amazon products for the search-link items in `server/treb_gear.json`; print the default design and report the middle of five throws (from the axle) to calibrate `physics.REAL_WORLD`.
+- **Owner's choice of what's next** (offered 2026-10-15, not yet picked): saved designs + share links; wind on the test throw; bigger machines (split parts, fixed-counterweight and floating-arm variants).
 
 ## Where things stand
 
