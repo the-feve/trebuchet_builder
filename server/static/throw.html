@@ -64,7 +64,7 @@
 <body>
 <header>
   <h1>Test throw</h1>
-  <a href="/">← Back to Trebuchet Builder</a>
+  <a href="./">← Back to Trebuchet Builder</a>
 </header>
 <main>
   <p class="note">See the arc your trebuchet throws: the arm swings, the sling whips round, the pin lets go and the ball flies. Change the settings to see how the arc and the distance change.</p>
@@ -109,7 +109,7 @@ function el(tag, attrs, parent) {
 // Any design field can come in the URL (?cw_mass=500&arm_length=250), so the
 // designer can link here with its current design.
 async function init() {
-  opts = await (await fetch('/api/options')).json();
+  opts = await (await fetch('api/options')).json();
   params = { ...opts.defaults };
   const q = new URLSearchParams(location.search);
   for (const k of NUM) if (q.has(k) && q.get(k) !== '' && isFinite(+q.get(k))) params[k] = +q.get(k);
@@ -142,7 +142,7 @@ function readForm() {
 async function plan() {
   const my = ++seq;
   let r;
-  try { r = await fetch('/api/plan', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(params) }); }
+  try { r = await fetch('api/plan', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(params) }); }
   catch { $('err').textContent = "Can't reach Trebuchet Builder; check your connection."; return; }
   if (my !== seq) return;  // a newer request is on its way
   const d = await r.json().catch(() => ({}));

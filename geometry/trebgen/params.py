@@ -108,6 +108,11 @@ class Derived:
     notes: list = field(default_factory=list)
 
 
+def in_sentence(label: str) -> str:
+    """'Steel BBs (4.5 mm)' -> 'steel BBs (4.5 mm)': lower-case the first word only."""
+    return label[:1].lower() + label[1:]
+
+
 class DesignError(ValueError):
     """A design that can't be built; the message is shown to the user."""
 

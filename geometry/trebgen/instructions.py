@@ -3,7 +3,7 @@ build_notes.txt."""
 
 from __future__ import annotations
 
-from .params import FILLS, DesignParams, Derived
+from .params import FILLS, DesignParams, Derived, in_sentence
 
 PRINT_NOTES = {
     "Frame_Right": "Flat, as exported. 4 walls, 30% infill: it carries the axle.",
@@ -41,7 +41,7 @@ def assembly_steps(p: DesignParams, d: Derived, pin_angle: float) -> list[str]:
         "sling hangs from when the arm is down.",
         f"Make the sling: two cords about {d.Ls / 10:.1f} cm long, each tied to one end of the pouch. Tie one cord "
         "through the small hole near the arm's tip; put a small ring (or a tied loop) on the other cord's end.",
-        f"Fill the bucket with {p.cw_mass:.0f} g of {FILLS[p.cw_fill]['label'].lower()} (weigh it) and press "
+        f"Fill the bucket with {p.cw_mass:.0f} g of {in_sentence(FILLS[p.cw_fill]['label'])} (weigh it) and press "
         "the lids in. Tape them if they're loose.",
         "To load: pull the arm down, loop the trigger cord round the arm near the tip and over the trigger pin "
         "in the post. Put the projectile in the pouch on the trough, the ring over the release pin, and lay "

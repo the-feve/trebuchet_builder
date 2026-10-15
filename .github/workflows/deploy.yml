@@ -1,0 +1,24 @@
+# The app is hosted inside Rocket Builder's Fly app (rocket-fevergeon), at
+# /trebuchet/ and trebuchet.quiverdesignworks.net. Rocket Builder's deploy
+# checks out this repo's main branch; this asks it to redeploy after a push.
+name: Redeploy on Fly (via rocket-builder-web)
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    env:
+      TOKEN: ${{ secrets.ROCKET_DEPLOY_TOKEN }}
+    steps:
+      - name: Skip until the token is set
+        if: env.TOKEN == ''
+        run: echo "::notice::ROCKET_DEPLOY_TOKEN isn't set; run rocket-builder-web's Deploy workflow by hand to ship this."
+      - name: Ask rocket-builder-web to deploy
+        if: env.TOKEN != ''
+        run: |
+          curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/the-feve/rocket-builder-web/dispatches \
+            -d '{"event_type":"trebuchet-updated"}'

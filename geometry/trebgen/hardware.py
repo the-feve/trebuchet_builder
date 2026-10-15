@@ -3,7 +3,7 @@ supplies list (Amazon affiliate links, to come) will match on."""
 
 from __future__ import annotations
 
-from .params import FILLS, PROJECTILES, DesignParams, Derived
+from .params import FILLS, PROJECTILES, DesignParams, Derived, in_sentence
 
 
 def bill_of_materials(p: DesignParams, d: Derived, pin_angle: float) -> list[dict]:
@@ -35,7 +35,7 @@ def bill_of_materials(p: DesignParams, d: Derived, pin_angle: float) -> list[dic
     add("trigger_cord", 1, "Trigger cord", "About 20 cm of strong string",
         "A loop round the arm near the tip and over the trigger pin.")
     fill = FILLS[p.cw_fill]["label"]
-    add(f"fill_{p.cw_fill}", 1, "Counterweight fill", f"{p.cw_mass:.0f} g of {fill.lower()}",
+    add(f"fill_{p.cw_fill}", 1, "Counterweight fill", f"{p.cw_mass:.0f} g of {in_sentence(fill)}",
         f"Fills the bucket (about {d.bucket['volume_cm3']:.0f} cm³); weigh it on a kitchen scale.")
     if p.projectile != "printed_ball":
         add(f"proj_{p.projectile}", 1, "Projectiles", PROJECTILES[p.projectile]["label"],

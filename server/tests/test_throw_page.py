@@ -10,8 +10,11 @@ client = TestClient(app)
 
 
 def test_throw_page_served():
+    """Served, and only relative URLs: the app also runs under /trebuchet/."""
     r = client.get("/throw")
-    assert r.status_code == 200 and "Test throw" in r.text and "/api/plan" in r.text
+    assert r.status_code == 200 and "Test throw" in r.text and "fetch('api/plan'" in r.text
+    assert "'/api" not in r.text and 'href="/' not in r.text
+    assert "throw?" in client.get("/").text  # the designer links here
 
 
 def test_plan_has_what_the_arc_needs():
