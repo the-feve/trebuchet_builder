@@ -1,0 +1,16 @@
+[project]
+name = "trebgen"
+version = "0.0.1"
+description = "Trebuchet Builder geometry and throw physics (build123d)"
+requires-python = ">=3.10"
+dependencies = ["build123d>=0.9", "numpy"]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["trebgen"]

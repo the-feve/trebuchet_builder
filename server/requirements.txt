@@ -1,0 +1,7 @@
+-e ../geometry
+fastapi>=0.110
+uvicorn>=0.29
+trimesh>=4.0
+numpy
+pytest
+httpx
