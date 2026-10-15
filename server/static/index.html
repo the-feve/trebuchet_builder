@@ -586,6 +586,12 @@ function sweepSvg(t) {
     <text x="${pad}" y="${H - 8}">${Math.round(x0)}° (late)</text><text x="${W - pad}" y="${H - 8}" text-anchor="end">${Math.round(x1)}° (early)</text>
     <text x="${pad}" y="${sy(y1) + 4}">${m1(y1)} m</text></svg>`;
 }
+// The /throw page takes any design field in the query string (relative link: works under /trebuchet/ too).
+function throwLink() {
+  const q = new URLSearchParams();
+  for (const [k, v] of Object.entries(params())) if (v != null && OPTS && v !== OPTS.defaults[k]) q.set(k, v);
+  return q.toString() ? `throw?${q}` : 'throw';
+}
 function showReport(r) {
   const t = r.throw, s = r.summary, cards = [];
   if (r.bed_problems?.length) cards.push(`<div class="card wide bad"><h3>Doesn't fit your printer</h3><ul>${r.bed_problems.map(x => `<li>${esc(x)}</li>`).join('')}</ul><p>Try a shorter arm or a bigger print bed setting.</p></div>`);
@@ -594,6 +600,7 @@ function showReport(r) {
       <div class="big"><b>${t.expected_m[0]}–${t.expected_m[1]} m</b><span>${Math.round(t.expected_m[0] * FT)}–${Math.round(t.expected_m[1] * FT)} ft</span></div>
       <p class="muted">Expected on the table. The model, without friction, says ${m1(t.range_m)} m.</p>
       ${flightSvg(t)}
+      <p><a href="${throwLink()}" target="_blank">Watch the test throw to scale →</a></p>
       <table><tr><td>Release speed</td><td class="n">${m1(t.release_speed_ms)} m/s (${Math.round(t.release_speed_ms * 2.237)} mph)</td></tr>
       <tr><td>Launch angle</td><td class="n">${Math.round(t.launch_angle_deg)}° up</td></tr>
       <tr><td>Highest point</td><td class="n">${m1(t.peak_height_m)} m</td></tr>
