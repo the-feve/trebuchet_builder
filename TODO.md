@@ -7,7 +7,9 @@ Steps for building Trebuchet Builder up from a small printable kit. Tick them of
 - [x] Printable parts + hardware list + assembly steps + license
 - [x] API: options, plan, build, preview GLB, ZIP
 - [ ] Page (`server/static/index.html`) matching Rocket Builder: Beginner/Advanced, live distance, 3D preview, report cards, guide/glossary
-- [ ] Throw animation on the 3D model; flight path and release-angle charts
+- [x] Test-throw page `/throw`: arm swing (slow motion, close-up inset) and the flight arc, expected-range band, room needed (2026-10-15)
+- [ ] Throw animation on the 3D model; release-angle chart; link `/throw` from the designer's report with the design in the query string
+- [ ] Wind (head/tail) on the test throw, like Rocket Builder's launch simulator
 - [ ] Tests, CI, Dockerfile
 - [ ] Print and throw the default design; compare with the estimate and set `physics.REAL_WORLD` from it (record in `docs/`)
 

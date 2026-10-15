@@ -9,6 +9,7 @@ Endpoints:
   POST /api/build                        geometry + estimate; returns a build id
   GET  /api/builds/{id}/preview.glb      assembled model for the preview
   GET  /api/builds/{id}/trebuchet.zip    print files, build notes, design.json
+  GET  /throw                            test-throw page: arm swing and flight arc
 """
 
 from __future__ import annotations
@@ -226,6 +227,13 @@ def healthz():
 @app.get("/", response_class=HTMLResponse)
 def index():
     return (HERE / "static" / "index.html").read_text()
+
+
+@app.get("/throw", response_class=HTMLResponse)
+def throw_page():
+    """Test throw: the arm swing and the arc, from /api/plan. Takes any design
+    field in the query string (/throw?cw_mass=500&arm_length=250)."""
+    return (HERE / "static" / "throw.html").read_text()
 
 
 @app.get("/terms", response_class=HTMLResponse)

@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111113" media="(prefers-color-scheme: dark)">
+<title>Test Throw · Trebuchet Builder</title>
+<script>try { const t = localStorage.getItem('theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch {}</script>
+<style>
+  /* Palette from rocket-builder-web (fevergeon.com / quiverdesignworks.net). */
+  :root {
+    --bg:#fff; --card:#f5f5f7; --ink:#1d1d1f; --muted:#6e6e73; --line:#e5e5ea; --field:#fff;
+    --accent:#0a58ca; --err:#d70015; --errbg:#fff2f3; --errline:#f5c2c7;
+    --sky:#eaf2fd; --table:#d9c3a5; --tableline:#a8875e; --band:rgba(10,88,202,.16); --wood:#8a5a2b; --cw:#6e6e73; --ball:#e8590c;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme=light]) {
+      --bg:#111113; --card:#1c1c1f; --ink:#f2f2f4; --muted:#a1a1a6; --line:#2c2c30; --field:#1c1c1f;
+      --accent:#6ea8fe; --err:#ff8a80; --errbg:#2e1416; --errline:#5c2a2c;
+      --sky:#15202e; --table:#3a2f22; --tableline:#7a5f3e; --band:rgba(110,168,254,.2); --wood:#c08a52; --cw:#a1a1a6; --ball:#ff922b;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme=dark] {
+    --bg:#111113; --card:#1c1c1f; --ink:#f2f2f4; --muted:#a1a1a6; --line:#2c2c30; --field:#1c1c1f;
+    --accent:#6ea8fe; --err:#ff8a80; --errbg:#2e1416; --errline:#5c2a2c;
+    --sky:#15202e; --table:#3a2f22; --tableline:#7a5f3e; --band:rgba(110,168,254,.2); --wood:#c08a52; --cw:#a1a1a6; --ball:#ff922b;
+    color-scheme: dark;
+  }
+  * { box-sizing:border-box; }
+  [hidden] { display:none !important; }
+  body { margin:0; font:14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg); }
+  a { color:var(--accent); }
+  header { display:flex; align-items:center; gap:12px; padding:10px max(16px, env(safe-area-inset-left)); border-bottom:1px solid var(--line); }
+  header h1 { font-size:16px; margin:0; flex:1; }
+  main { max-width:1000px; margin:0 auto; padding:14px 16px 40px; }
+  .controls { display:flex; flex-wrap:wrap; gap:14px 22px; align-items:end; padding:12px 14px; background:var(--card); border-radius:10px; }
+  .controls label { display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:var(--muted); min-width:0; max-width:100%; }
+  .controls output { color:var(--ink); font-weight:600; }
+  input[type=range] { width:200px; max-width:70vw; accent-color:var(--accent); }
+  select { max-width:100%; padding:6px 8px; border:1px solid var(--line); border-radius:6px; font:inherit; font-size:16px; color:var(--ink); background:var(--field); }
+  .check { flex-direction:row !important; align-items:center; gap:6px !important; }
+  input[type=checkbox] { accent-color:var(--accent); width:16px; height:16px; margin:0; }
+  button { padding:8px 16px; font:600 14px system-ui, -apple-system, sans-serif; border-radius:8px; border:1px solid var(--ink); cursor:pointer; background:var(--ink); color:var(--bg); }
+  button:focus-visible, input:focus-visible, select:focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
+  .stage { margin-top:14px; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--sky); position:relative; }
+  .stage svg { display:block; width:100%; height:auto; }
+  .clock { position:absolute; top:8px; left:10px; font:600 13px ui-monospace, Menlo, monospace; color:var(--muted); }
+  .phase { position:absolute; top:8px; right:10px; font-weight:600; font-size:13px; }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:10px; margin-top:14px; }
+  .stat { background:var(--card); border-radius:10px; padding:10px 12px; }
+  .stat .k { font-size:12px; color:var(--muted); }
+  .stat .v { font-size:20px; font-weight:700; }
+  .stat .s { font-size:12px; color:var(--muted); }
+  h2 { font-size:15px; margin:22px 0 8px; }
+  .warn { margin-top:12px; padding:8px 12px; border:1px solid var(--errline); background:var(--errbg); color:var(--err); border-radius:8px; }
+  .warn:empty { display:none; }
+  .note { color:var(--muted); font-size:12.5px; }
+  ul { padding-left:20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Test throw</h1>
+  <a href="/">← Back to Trebuchet Builder</a>
+</header>
+<main>
+  <p class="note">See the arc your trebuchet throws: the arm swings, the sling whips round, the pin lets go and the ball flies. Change the settings to see how the arc and the distance change.</p>
+  <div class="controls">
+    <label>Counterweight <output id="cwout"></output><input type="range" id="cw_mass" min="100" max="1500" step="25"></label>
+    <label>Arm length <output id="armout"></output><input type="range" id="arm_length" min="120" max="400" step="10"></label>
+    <label>Projectile <select id="projectile"></select></label>
+    <label class="check"><input type="checkbox" id="autorel" checked> Best release angle</label>
+    <label id="relbox" hidden>Release pin angle <output id="relout"></output><input type="range" id="release_angle" min="10" max="110" step="1"></label>
+    <button id="play">↻ Throw again</button>
+  </div>
+  <div id="err" class="warn" role="alert"></div>
+  <div class="stage">
+    <span class="clock" id="clock">0.00 s</span><span class="phase" id="phase"></span>
+    <svg id="stage" viewBox="0 0 1000 440" role="img" aria-label="Side view of the throw: the arc from the trebuchet to where the ball lands"></svg>
+  </div>
+  <div class="stats" id="stats"></div>
+  <h2>Room you need</h2>
+  <ul id="room"></ul>
+  <p class="note">The model has no friction, so real throws land short: the shaded band is 60–85% of the model's distance, where most throws should land until you've measured your own. Distances are from the axle, landing at table height.</p>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const ft = m => (m * 3.28084).toFixed(1);
+const SVGNS = 'http://www.w3.org/2000/svg';
+const SLOWMO = 5;  // the swing lasts about 0.2 s: play it 5× slower, the flight in real time
+const PAUSE = 0.6;  // s, cocked and still before each throw
+let W = 1000, H = 440, BASE = 380;
+let opts, params = {}, data = null, view, raf = 0, simT = 0, seq = 0;
+const NUM = ['arm_length', 'arm_ratio', 'sling_ratio', 'cw_mass', 'projectile_diameter', 'projectile_mass', 'release_angle',
+             'start_angle', 'print_bed', 'infill', 'bucket_width', 'arm_thickness'];
+const STR = ['cw_fill', 'projectile', 'axle'];
+
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+
+// Any design field can come in the URL (?cw_mass=500&arm_length=250), so the
+// designer can link here with its current design.
+async function init() {
+  opts = await (await fetch('/api/options')).json();
+  params = { ...opts.defaults };
+  const q = new URLSearchParams(location.search);
+  for (const k of NUM) if (q.has(k) && q.get(k) !== '' && isFinite(+q.get(k))) params[k] = +q.get(k);
+  for (const k of STR) if (q.has(k)) params[k] = q.get(k);
+  $('projectile').innerHTML = Object.entries(opts.projectiles).filter(([k]) => k !== 'custom' || params.projectile === 'custom')
+    .map(([k, v]) => `<option value="${esc(k)}">${esc(v.label)}</option>`).join('');
+  $('projectile').value = params.projectile;
+  $('cw_mass').value = params.cw_mass; $('arm_length').value = params.arm_length;
+  $('autorel').checked = params.release_angle == null;
+  $('release_angle').value = params.release_angle ?? 45;
+  syncLabels();
+  plan();
+}
+function syncLabels() {
+  $('cwout').textContent = `${$('cw_mass').value} g`;
+  $('armout').textContent = `${$('arm_length').value} mm`;
+  $('relout').textContent = `${$('release_angle').value}°`;
+  $('relbox').hidden = $('autorel').checked;
+}
+function readForm() {
+  params.cw_mass = +$('cw_mass').value;
+  params.arm_length = +$('arm_length').value;
+  params.projectile = $('projectile').value;
+  params.release_angle = $('autorel').checked ? null : +$('release_angle').value;
+  const q = new URLSearchParams();
+  for (const [k, v] of Object.entries(params)) if (v != null && v !== opts.defaults[k]) q.set(k, v);
+  history.replaceState(null, '', q.toString() ? `?${q}` : location.pathname);
+}
+
+async function plan() {
+  const my = ++seq;
+  let r;
+  try { r = await fetch('/api/plan', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(params) }); }
+  catch { $('err').textContent = "Can't reach Trebuchet Builder; check your connection."; return; }
+  if (my !== seq) return;  // a newer request is on its way
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    const det = d.detail;
+    $('err').textContent = typeof det === 'string' ? det : 'Those settings are out of range.';
+    return;
+  }
+  $('err').textContent = d.throw.ok ? '' : d.throw.problem;
+  data = d;
+  if (d.throw.ok) { draw(); stats(); start(); }
+}
+
+// ---- drawing (metres; x from the axle, z up from the table)
+function draw() {
+  const svg = $('stage'); svg.innerHTML = '';
+  const narrow = svg.parentElement.clientWidth < 600;
+  [W, H] = narrow ? [420, 400] : [1000, 440]; BASE = H - 60;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const t = data.throw, a = data.anim, P = t.path;
+  const xmin = Math.min(-0.35, ...P.map(p => p[0])), xmax = Math.max(t.range_m * 1.05, ...P.map(p => p[0]));
+  const top = Math.max(0.5, ...P.map(p => p[1]), a.H / 1000 + (a.L1 + a.Ls) / 1000);
+  const s = Math.min((W - 50) / (xmax - xmin), (BASE - 40) / top);
+  const ox = 25 - xmin * s;
+  view = { s, X: x => ox + x * s, Y: z => BASE - z * s };
+  // table top + distance ruler
+  el('rect', { x: 0, y: BASE, width: W, height: H - BASE, fill: 'var(--table)' }, svg);
+  el('line', { x1: 0, x2: W, y1: BASE, y2: BASE, stroke: 'var(--tableline)', 'stroke-width': 2 }, svg);
+  const lo = t.expected_m[0], hi = t.expected_m[1];
+  el('rect', { x: view.X(lo), y: BASE - 6, width: (hi - lo) * s, height: 12, fill: 'var(--band)', rx: 3 }, svg);
+  el('text', { x: view.X((lo + hi) / 2), y: BASE - 12, 'text-anchor': 'middle', 'font-size': 12, fill: 'var(--accent)', 'font-weight': 600 }, svg)
+    .textContent = `expect ${lo}–${hi} m`;
+  const step = t.range_m > 12 ? 2 : t.range_m > 4 ? 1 : 0.5;
+  for (let x = 0; x <= xmax; x += step) {
+    el('line', { x1: view.X(x), x2: view.X(x), y1: BASE, y2: BASE + 6, stroke: 'var(--tableline)' }, svg);
+    if (Math.abs(x % (step * (narrow ? 2 : 1))) < 1e-9)
+      el('text', { x: view.X(x), y: BASE + 22, 'text-anchor': 'middle', 'font-size': 12, fill: 'var(--ink)' }, svg).textContent = `${x} m`;
+  }
+  // the full arc, faint, then the live trail on top
+  el('polyline', { points: P.map(p => `${view.X(p[0]).toFixed(1)},${view.Y(p[1]).toFixed(1)}`).join(' '), fill: 'none', stroke: 'var(--muted)', 'stroke-dasharray': '3 5', opacity: 0.6 }, svg);
+  view.trail = el('polyline', { points: '', fill: 'none', stroke: 'var(--accent)', 'stroke-width': 2.5, 'stroke-linejoin': 'round' }, svg);
+  view.marks = el('g', {}, svg);
+  // the machine at the arc's scale, plus a zoomed inset so the swing is visible
+  view.main = machine(svg, view);
+  const ins = narrow ? { x: 8, y: 28, w: 130, h: 130 } : { x: 10, y: 30, w: 200, h: 190 };
+  const reach = (a.L1 + a.Ls) / 1000, mh = a.H / 1000 + reach;
+  const s2 = Math.min(ins.h / (mh + 0.02), ins.w / (2 * reach + 0.04));
+  const zx = ins.x + ins.w / 2, zy = ins.y + ins.h - 6;
+  const zoom = { s: s2, X: x => zx + x * s2, Y: z => zy - z * s2 };
+  el('clipPath', { id: 'insclip' }, svg).appendChild(el('rect', { x: ins.x, y: ins.y, width: ins.w, height: ins.h, rx: 8 }));
+  const ig = el('g', { 'clip-path': 'url(#insclip)' }, svg);
+  el('rect', { x: ins.x, y: ins.y, width: ins.w, height: ins.h, rx: 8, fill: 'var(--bg)', opacity: 0.85 }, ig);
+  el('line', { x1: ins.x, x2: ins.x + ins.w, y1: zy, y2: zy, stroke: 'var(--tableline)', 'stroke-width': 2 }, ig);
+  view.zoom = machine(ig, zoom);
+  el('rect', { x: ins.x, y: ins.y, width: ins.w, height: ins.h, rx: 8, fill: 'none', stroke: 'var(--line)' }, svg);
+  el('text', { x: ins.x + 8, y: ins.y + 16, 'font-size': 11, fill: 'var(--muted)' }, svg).textContent = 'close-up';
+  // landing marker
+  const lx = view.X(t.range_m);
+  el('path', { d: `M${lx} ${BASE} l-6 12 h12z`, fill: 'var(--ball)' }, svg);
+}
+
+function machine(parent, v) {
+  const a = data.anim, s = v.s, Hm = a.H / 1000, base = data.summary.base_length_mm / 2000;
+  const m = el('g', {}, parent), r = { v };
+  el('path', { d: `M${v.X(-base)} ${v.Y(0)} L${v.X(0)} ${v.Y(Hm)} L${v.X(base)} ${v.Y(0)}`, fill: 'none', stroke: 'var(--wood)', 'stroke-width': Math.max(2, 0.012 * s), 'stroke-linejoin': 'round' }, m);
+  r.arm = el('line', { stroke: 'var(--wood)', 'stroke-width': Math.max(2, 0.01 * s), 'stroke-linecap': 'round' }, m);
+  r.hanger = el('line', { stroke: 'var(--cw)', 'stroke-width': Math.max(1, 0.004 * s) }, m);
+  r.cwSize = Math.max(5, data.summary.bucket_mm[0] / 1000 * s);
+  r.cw = el('rect', { width: r.cwSize, height: r.cwSize * 1.2, fill: 'var(--cw)', rx: 2 }, m);
+  r.sling = el('line', { stroke: 'var(--muted)', 'stroke-width': 1 }, m);
+  el('circle', { cx: v.X(0), cy: v.Y(Hm), r: Math.max(2, 0.006 * s), fill: 'var(--ink)' }, m);
+  r.ball = el('circle', { r: Math.max(3.5, a.r_p / 1000 * s), fill: 'var(--ball)' }, m);
+  return r;
+}
+function updateMachine(r, p, ball) {
+  const v = r.v, line = (l, a, b) => { l.setAttribute('x1', v.X(a[0])); l.setAttribute('y1', v.Y(a[1])); l.setAttribute('x2', v.X(b[0])); l.setAttribute('y2', v.Y(b[1])); };
+  line(r.arm, p.hinge, p.tip);
+  line(r.hanger, p.hinge, p.cw);
+  r.cw.setAttribute('x', v.X(p.cw[0]) - r.cwSize / 2); r.cw.setAttribute('y', v.Y(p.cw[1]) - r.cwSize * 0.6);
+  const b = ball || p.ball;
+  r.ball.setAttribute('cx', v.X(b[0])); r.ball.setAttribute('cy', v.Y(b[1]));
+  r.sling.setAttribute('visibility', ball ? 'hidden' : 'visible');
+  if (!ball) line(r.sling, p.tip, p.ball);
+}
+function pose(f) {
+  // f = [t, theta, psi, sigma]; lengths in mm from the anim block
+  const a = data.anim, k = 1 / 1000;
+  const ax = 0, az = a.H * k;
+  const tip = [ax + a.L1 * k * Math.cos(f[1]), az + a.L1 * k * Math.sin(f[1])];
+  const hinge = [ax - a.L2 * k * Math.cos(f[1]), az - a.L2 * k * Math.sin(f[1])];
+  const cw = [hinge[0] + a.Lc * k * Math.cos(f[2]), hinge[1] + a.Lc * k * Math.sin(f[2])];
+  const ball = [tip[0] + a.Ls * k * Math.cos(f[3]), tip[1] + a.Ls * k * Math.sin(f[3])];
+  return { tip, hinge, cw, ball };
+}
+function lerpFrame(F, t) {
+  let i = F.findIndex(f => f[0] >= t);
+  if (i < 0) return F[F.length - 1];
+  if (i === 0) return F[0];
+  const a = F[i - 1], b = F[i], u = (t - a[0]) / (b[0] - a[0] || 1);
+  return a.map((v, j) => v + (b[j] - v) * u);
+}
+// Time line: swing (slow motion) then flight (real time). simT is "screen" seconds.
+function render(st) {
+  st = Math.max(0, st - PAUSE);
+  const t = data.throw, F = data.anim.frames, P = t.path;
+  const swingEnd = F[F.length - 1][0], swingScreen = swingEnd * SLOWMO;
+  const dtPath = t.flight_time_s / Math.max(1, P.length - 1);
+  let realT, ball, phase, frame;
+  if (st < swingScreen) {
+    realT = st / SLOWMO; frame = lerpFrame(F, realT);
+    phase = st === 0 ? 'Ready' : realT < (t.liftoff_t ?? 0) ? 'Counterweight falling' : 'Sling swinging (slow motion)';
+  } else {
+    frame = F[F.length - 1];
+    const ft_ = Math.min(st - swingScreen, t.flight_time_s);
+    realT = swingEnd + ft_;
+    const u = ft_ / dtPath, i = Math.min(P.length - 1, Math.floor(u)), j = Math.min(P.length - 1, i + 1), w = u - i;
+    ball = [P[i][0] + (P[j][0] - P[i][0]) * w, P[i][1] + (P[j][1] - P[i][1]) * w];
+    view.trail.setAttribute('points', P.slice(0, i + 1).map(p => `${view.X(p[0]).toFixed(1)},${view.Y(p[1]).toFixed(1)}`).concat(`${view.X(ball[0]).toFixed(1)},${view.Y(ball[1]).toFixed(1)}`).join(' '));
+    phase = ft_ >= t.flight_time_s ? `Landed: ${t.range_m.toFixed(1)} m (model)` : 'Flying';
+  }
+  const p = pose(frame);
+  updateMachine(view.main, p, ball);
+  updateMachine(view.zoom, p, ball);
+  $('clock').textContent = `${realT.toFixed(2)} s`;
+  $('phase').textContent = phase;
+  view.marks.innerHTML = '';
+  if (ball) {
+    const pk = P.reduce((m, q) => q[1] > m[1] ? q : m, P[0]);
+    if (ball[0] >= pk[0]) mark(pk, `peak ${t.peak_height_m.toFixed(1)} m above the table`, -10);
+    mark(P[0], `release ${Math.round(t.launch_angle_deg)}° up, ${t.release_speed_ms.toFixed(1)} m/s`, -14, true);
+  }
+  return st >= swingScreen + t.flight_time_s;
+}
+function mark(p, txt, dy, left) {
+  const X = view.X(p[0]), Y = view.Y(p[1]);
+  el('circle', { cx: X, cy: Y, r: 3.5, fill: 'var(--accent)' }, view.marks);
+  const end = X > W - 200;
+  el('text', { x: X + (end ? -8 : 8), y: Y + dy, 'text-anchor': end ? 'end' : 'start', fill: 'var(--ink)', 'font-size': 12.5, 'font-weight': 600 }, view.marks).textContent = txt;
+}
+function start() {
+  cancelAnimationFrame(raf);
+  simT = 0;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { render(1e9); return; }
+  let last = performance.now();
+  const tick = now => {
+    simT += (now - last) / 1000; last = now;
+    if (!render(simT)) raf = requestAnimationFrame(tick);
+  };
+  raf = requestAnimationFrame(tick);
+}
+
+function stats() {
+  const t = data.throw, s = data.summary;
+  const tiles = [
+    ['Distance (model)', `${t.range_m.toFixed(1)} m`, `${ft(t.range_m)} ft; expect ${t.expected_m[0]}–${t.expected_m[1]} m`],
+    ['Highest point', `${t.peak_height_m.toFixed(1)} m`, `${ft(t.peak_height_m)} ft above the table`],
+    ['Release', `${t.release_speed_ms.toFixed(1)} m/s`, `${Math.round(t.launch_angle_deg)}° up; pin at ${s.pin_angle_deg}°`],
+    ['Time in the air', `${t.flight_time_s.toFixed(2)} s`, `swing ${t.release_t.toFixed(2)} s`],
+    ['Efficiency', `${Math.round(t.efficiency * 100)}%`, 'of the weight\'s drop goes into the ball'],
+  ];
+  $('stats').innerHTML = tiles.map(([k, v, sub]) => `<div class="stat"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${esc(sub)}</div></div>`).join('');
+  // Clear a lane past the model's distance (it can beat the estimate), and
+  // headroom for the peak: a table is about 0.75 m high.
+  const lane = Math.ceil(t.range_m * 1.2 * 2) / 2, ceiling = t.peak_height_m + 0.75;
+  $('room').innerHTML = `
+    <li>Clear a lane at least <b>${lane} m</b> (${ft(lane)} ft) long in front of the trebuchet and about 1 m (3 ft) wide: the model's distance plus 20%, since a good throw can beat the estimate.</li>
+    <li>Indoors, the ball climbs to about <b>${ceiling.toFixed(1)} m</b> (${ft(ceiling)} ft) above the floor from a normal table${ceiling > 2.4 ? ': higher than most ceilings, so throw outside or lower the release pin angle' : ''}.</li>
+    <li>Stand beside or behind it, never in front. Nobody walks into the lane while it's cocked.</li>`;
+}
+
+let timer;
+for (const id of ['cw_mass', 'arm_length', 'release_angle', 'projectile', 'autorel']) {
+  $(id).addEventListener('input', () => {
+    syncLabels(); readForm();
+    clearTimeout(timer); timer = setTimeout(plan, 150);
+  });
+}
+$('play').addEventListener('click', () => data && start());
+let lastNarrow = null;
+addEventListener('resize', () => {
+  const n = $('stage').parentElement.clientWidth < 600;
+  if (data && n !== lastNarrow) { lastNarrow = n; draw(); render(simT); }
+});
+init();
+</script>
+</body>
+</html>
