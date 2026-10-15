@@ -1,6 +1,6 @@
 # Handoff
 
-_Last updated 2026-10-15 (first session, paused early at the owner's request). Read this, then `TODO.md`._
+_Last updated 2026-10-15 (second session: the page, tests, hosting in the Rocket Builder Fly app). Read this, then `TODO.md`._
 
 ## Where things stand
 
@@ -14,14 +14,20 @@ Trebuchet Builder: a web page where someone designs a small 3D-printable desk tr
 - `server/app.py` (FastAPI): `/api/options`, `/api/plan` (estimate only), `/api/build` (geometry + report + "throw farther" advice), `/api/builds/{id}/preview.glb`, `/api/builds/{id}/trebuchet.zip` (STLs with license header, build_notes.txt, LICENSE.txt, design.json), `/terms`. `/api/plan` smoke-tested (200). `/api/build` and the ZIP are **not exercised yet**.
 - `server/terms.py`: Rocket Builder's personal-use license, reworded for trebuchets. three.js r160 vendored in `server/static/vendor/`.
 
-**Not done yet:** `server/static/index.html` (the page) doesn't exist yet, so `/` fails. No tests, CI, Dockerfile or hosting.
+- `server/static/index.html` (2026-10-15, second session): the page, in Rocket Builder's look. Beginner/Advanced; six numbered steps (arm size, printer bed, counterweight + fill, projectile picture buttons, sling length, build); live estimate under Build from `/api/plan` as you type (no geometry); 3D preview with an animated throw (▶ Throw, slow motion; arm turns about the axle, bucket hangs from the hinge, sling drawn as a line, the ball follows its flight path with a dashed trail); guide with a diagram, how-to, what makes it throw farther, key terms, about the estimate, safety. Report cards: Test throw (expected range, flight-path chart, release speed, angle, peak, efficiency, sling pull), Release angle (distance-vs-angle chart), Your trebuchet, How to throw farther (each with *Try it*), Parts to print, What else you need, Putting it together, Safety. Checked in headless Chromium: no console errors, build and animation work. **All URLs are relative** so it runs at `/` and under `/trebuchet/`.
+- `server/terms.py` is now `server/treb_terms.py`: the Rocket Builder app imports this server, and its own `terms` module would clash.
+- Tests: `geometry/tests` (13: energy conserved through the swing, sensible default throw, release angle and counterweight effects, DesignErrors, valid parts on the bed, bucket clear of the axle, bed check, BOM keys) and `server/tests` (5: options/page, plan, 422, build + GLB + ZIP, 404). CI in `.github/workflows/ci.yml`.
+
+**Hosting (owner chose 2026-10-15):** inside Rocket Builder's Fly app `rocket-fevergeon`, at `/trebuchet/` and (once DNS is set) `trebuchet.quiverdesignworks.net`. rocket-builder-web's `server/trebuchet_mount.py` loads this repo from a checkout made at deploy time (its `deploy.yml` checks out **this repo's `main`**). `.github/workflows/deploy.yml` here asks rocket-builder-web to redeploy after a push to `main` (needs `ROCKET_DEPLOY_TOKEN`; skips with a notice without it). Owner steps are in rocket-builder-web `HANDOFF.md`, Next steps 8: make a `main` branch here, add the read token there, merge its PR, DNS.
+
+Rules that follow from sharing the app: keep page URLs relative; don't add server modules whose names clash with rocket-builder-web's `server/` (`app` is loaded under another name; `terms`, `designs`, `accounts`, `orders`, `shop`, `supplies`, `notify` are taken); one 1 GB machine runs both, so keep builds light.
 
 ## Next steps (in order)
 
-1. Write `server/static/index.html` by adapting rocket-builder-web's page (copy its CSS tokens, header, form/3D/report grid, splitters, theme, progress bar and viewer code). Form: Beginner steps (arm size, counterweight + fill, projectile, sling, printer bed, Build); Advanced adds arm ratio, release angle (blank = best), start angle, bucket width, arm thickness, axle type, infill. Use `/api/plan` for live distance as sliders move, `/api/build` for the model. Report cards: Test throw (expected range, speed, angle, peak, flight-path SVG from `throw.path`, distance-vs-release-angle chart from `throw.sweep`), Your trebuchet (`summary`), How to throw farther (`advice`), What to buy (`bom`), Parts to print (`parts`), Assembly steps, Safety. Animate the throw: GLB nodes are `<Part>#<n>`; parts with role `arm` turn about the axle (0, 0, H) by -(theta - theta0) about +Y, `bucket` parts hang from the hinge and turn by -(psi - psi0); `anim.frames` = [t, theta, psi, sigma]; draw the sling as a line from the tip to the ball.
-2. Tests: `geometry/tests` (energy conserved during the free swing; default design builds, valid single solids, fits 220 bed; DesignError cases; release-angle monotonic sanity) and `server/tests` (plan, build, zip contents).
-3. CI workflow and Dockerfile copied from rocket-builder-web (swap rocketgen for trebgen).
-4. Owner decision: hosting (see TODO).
+1. Owner: the hosting steps above. Then open https://rocket.quiverdesignworks.net/trebuchet/ and try it on a phone.
+2. Print the default design and throw it: note distance, what broke or rubbed, and set `physics.REAL_WORLD` from it (record in `docs/`).
+3. Supplies page with Amazon links (TODO step 2); the report's "What else you need" says links are coming.
+4. Saved designs / share links, then orders (reuse Rocket Builder's code; mind the module-name rule above).
 
 ## Decisions log
 
@@ -29,6 +35,7 @@ Trebuchet Builder: a web page where someone designs a small 3D-printable desk tr
 - 2026-10-15: First machine is a hinged-counterweight trebuchet (hinged throws farther than fixed and is easy to print). Fixed and floating-arm (FAT) variants are later steps.
 - 2026-10-15: Hardware chosen for cheapness and availability: M8 axle bolt + 608 skate bearings (option: plain hole), M4 hinge bolt, M3 self-tapping screws, 2 mm nail or paper clip as release pin, fishing line/kite string sling, leather/felt pouch, split ring.
 - 2026-10-15: The arm starts at a set angle (45°) with the sling dropping to the trough, and the bucket hangs on tall hanger plates when it would otherwise hit the axle. The first version (arm tip down at the trough) put the bucket through the axle spacers.
+- 2026-10-15: Hosted inside Rocket Builder's Fly app (no second app), not a separate one.
 - 2026-10-15: Distances are from the axle, on level ground at table height. The model has no friction; the page shows 60-85% of it as "expect" until real test throws calibrate it.
 
 ## How to run locally
@@ -36,5 +43,5 @@ Trebuchet Builder: a web page where someone designs a small 3D-printable desk tr
 ```
 python -m venv .venv && . .venv/bin/activate      # Windows: .venv\Scripts\Activate.ps1
 cd server && pip install -r requirements.txt
-uvicorn app:app --reload        # http://127.0.0.1:8000 (needs index.html, step 1)
+uvicorn app:app --reload        # http://127.0.0.1:8000
 ```

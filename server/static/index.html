@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111113" media="(prefers-color-scheme: dark)">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" href="data:,">
+<title>Trebuchet Builder · Quiver Design Works</title>
+<!-- Every URL on this page is relative: the app runs at / on its own and at /trebuchet/ inside the Rocket Builder app. -->
+<style>
+  /* Same palette and layout as Rocket Builder (fevergeon.com / quiverdesignworks.net shared look). */
+  :root {
+    color-scheme: light;
+    --bg:#fff; --panel:#fff; --card:#f5f5f7; --ink:#1d1d1f; --muted:#6e6e73; --line:#e5e5ea; --rowline:#efeff2;
+    --field:#fff; --accent:#0a58ca; --accent-ink:#fff; --err:#d70015; --errbg:#fff2f3; --errline:#f5c2c7;
+    --view-top:#f5f5f7; --view-bot:#e9e9ee; --chip:rgba(255,255,255,.88); --ok:#1a7f37; --warn:#9a6700;
+    --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
+    --safe-l:env(safe-area-inset-left,0px); --safe-r:env(safe-area-inset-right,0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme=light]) {
+      color-scheme: dark;
+      --bg:#111113; --panel:#111113; --card:#1c1c1f; --ink:#f2f2f4; --muted:#a1a1a6; --line:#2c2c30; --rowline:#222226;
+      --field:#1c1c1f; --accent:#6ea8fe; --accent-ink:#111113; --err:#ff8a80; --errbg:#2e1416; --errline:#5c2a2c;
+      --view-top:#1c1c1f; --view-bot:#0b0b0d; --chip:rgba(28,28,31,.88); --ok:#56d364; --warn:#e3b341;
+    }
+  }
+  :root[data-theme=dark] {
+    color-scheme: dark;
+    --bg:#111113; --panel:#111113; --card:#1c1c1f; --ink:#f2f2f4; --muted:#a1a1a6; --line:#2c2c30; --rowline:#222226;
+    --field:#1c1c1f; --accent:#6ea8fe; --accent-ink:#111113; --err:#ff8a80; --errbg:#2e1416; --errline:#5c2a2c;
+    --view-top:#1c1c1f; --view-bot:#0b0b0d; --chip:rgba(28,28,31,.88); --ok:#56d364; --warn:#e3b341;
+  }
+  * { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+  body { margin:0; font:14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg);
+    -webkit-tap-highlight-color:transparent; display:flex; flex-direction:column; height:100vh; height:100dvh; }
+  a { color:var(--accent); }
+  header { flex:none; display:flex; align-items:center; flex-wrap:wrap; gap:6px 18px; min-height:52px;
+    padding:calc(8px + var(--safe-t)) calc(16px + var(--safe-r)) 8px calc(16px + var(--safe-l));
+    border-bottom:1px solid var(--line); background:var(--panel); }
+  header h1 { font-size:1.15rem; font-weight:700; letter-spacing:.02em; margin:0; }
+  header nav { display:flex; gap:18px; align-items:center; font-size:14px; }
+  header nav a { color:var(--ink); text-decoration:none; }
+  header nav a:hover { text-decoration:underline; text-underline-offset:5px; }
+  header .units { color:var(--muted); font-size:12px; margin-left:auto; }
+  #theme { flex:none; padding:5px 12px; font:500 12px system-ui, -apple-system, sans-serif; color:var(--muted);
+    background:transparent; border:1px solid var(--line); border-radius:6px; cursor:pointer; }
+  #theme:hover { color:var(--ink); border-color:var(--muted); }
+  main { flex:1 1 auto; min-height:0; display:grid; grid-template-columns:340px minmax(0,1fr); }
+  #form { overflow-y:auto; -webkit-overflow-scrolling:touch; padding:8px 14px 16px calc(14px + var(--safe-l)); background:var(--panel); border-right:1px solid var(--line); }
+  fieldset { border:none; border-top:1px solid var(--line); margin:10px 0 0; padding:8px 0 0; min-width:0; }
+  legend { font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); padding:0 6px 0 0; }
+  label { display:grid; grid-template-columns:1fr 120px; align-items:center; gap:8px; margin:6px 0; }
+  label.check { grid-template-columns:1fr auto; }
+  input[type=number], select { width:100%; padding:5px 7px; border:1px solid var(--line); border-radius:6px; font:inherit; color:var(--ink); background:var(--field); }
+  input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
+  input:disabled { opacity:.5; }
+  input[type=checkbox] { accent-color:var(--accent); width:16px; height:16px; margin:0; }
+  .hint { color:var(--muted); font-size:11.5px; margin:-2px 0 4px; }
+  .actions { position:sticky; bottom:-16px; background:var(--panel); padding:10px 0 6px; display:flex; flex-wrap:wrap; gap:8px; border-top:1px solid var(--line); margin-top:12px; }
+  button, a.btn { flex:1; padding:9px 12px; border-radius:6px; border:1px solid transparent; font:600 14px system-ui, -apple-system, sans-serif; cursor:pointer; text-align:center; text-decoration:none; }
+  #build { background:var(--ink); color:var(--bg); }
+  #build:hover { opacity:.88; }
+  #build:disabled { opacity:.5; cursor:wait; }
+  #build.attention { box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent); }
+  a.btn { color:var(--ink); background:transparent; border-color:var(--line); }
+  a.btn:hover { border-color:var(--accent); color:var(--accent); }
+  a.btn.off { pointer-events:none; opacity:.4; }
+  #live { flex:1 1 100%; margin:0; font-size:13px; color:var(--muted); }
+  #live b { color:var(--ink); font-size:15px; }
+  #live.bad b { color:var(--err); }
+  #dirty { flex:1 1 100%; margin:0; font-size:12px; color:var(--warn); }
+  #modebar { display:flex; margin:6px 0 2px; border:1px solid var(--line); border-radius:6px; overflow:hidden; }
+  #modebar button { flex:1; padding:5px 8px; border:0; border-radius:0; font:600 12px system-ui; color:var(--muted); background:transparent; }
+  #modebar button[aria-pressed=true] { color:var(--accent-ink); background:var(--accent); }
+  #modehint { font-size:11px; color:var(--muted); margin:4px 0 0; }
+  body.beginner .adv { display:none !important; }
+
+  /* Numbered steps, as in Rocket Builder's Beginner mode */
+  .step { display:flex; align-items:center; gap:10px; margin:16px 0 4px; font-size:16px; font-weight:700; }
+  .step .n { flex:none; display:grid; place-items:center; width:26px; height:26px; border-radius:50%;
+    background:var(--ink); color:var(--bg); font-size:13px; font-weight:700; }
+  .why { margin:2px 0 8px; font-size:13.5px; line-height:1.45; color:var(--muted); }
+  .why b { color:var(--ink); font-weight:600; }
+  .more { font-size:13px; color:var(--accent); white-space:nowrap; }
+  .conv { margin:-2px 0 6px; font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums; }
+  .conv b { color:var(--ink); }
+  .row { display:flex; gap:8px; align-items:center; }
+  .row input[type=number] { width:96px; flex:none; }
+  input[type=range].slider { flex:1; width:100%; margin:4px 0 2px; accent-color:var(--accent); }
+  .choices { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; margin:6px 0 4px; }
+  .choices button { display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 4px 6px;
+    border:1.5px solid var(--line); border-radius:8px; background:var(--field); color:var(--ink); font:600 12px system-ui, -apple-system, sans-serif; cursor:pointer; }
+  .choices button:hover { border-color:var(--muted); }
+  .choices button[aria-pressed=true] { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent); }
+  .choices svg { width:46px; height:46px; display:block; color:var(--ink); }
+  .choices small { color:var(--muted); font-weight:500; }
+
+  #right { display:grid; grid-template-rows:minmax(0,1fr) auto; min-width:0; min-height:0; }
+  #view { position:relative; min-height:0; min-width:0; overflow:hidden; background:linear-gradient(var(--view-top),var(--view-bot));
+    -webkit-user-select:none; user-select:none; }
+  #view canvas { position:absolute; inset:0; width:100% !important; height:100% !important; display:block; touch-action:none; }
+  #status { position:absolute; z-index:1; left:12px; top:10px; max-width:calc(100% - 300px); padding:4px 8px; background:var(--chip);
+    border:1px solid var(--line); border-radius:6px; font-size:12px; color:var(--muted); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+  #viewopts { position:absolute; z-index:1; right:12px; top:10px; display:flex; gap:10px; align-items:center; background:var(--chip); border:1px solid var(--line);
+    padding:4px 10px; border-radius:6px; font-size:12px; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+  #viewopts label { display:flex; margin:0; gap:5px; align-items:center; }
+  #viewopts button { flex:none; padding:2px 8px; font:500 12px system-ui; border:1px solid var(--line); border-radius:4px; color:var(--ink); background:transparent; }
+  #viewopts button.go { background:var(--ink); color:var(--bg); border-color:var(--ink); font-weight:600; }
+  #viewopts button:disabled { opacity:.4; }
+  #progress { position:absolute; z-index:2; left:0; right:0; top:0; height:3px; }
+  #progress > div { height:100%; width:0; background:var(--accent); transition:width .2s; }
+  #report { padding:10px 16px calc(10px + var(--safe-b)) 16px; background:var(--panel); border-top:1px solid var(--line);
+    max-height:42vh; max-height:42dvh; overflow-y:auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:12px; }
+  #report:empty { display:none; }
+  .card { border:1px solid var(--line); border-radius:10px; padding:12px 14px; background:var(--card); min-width:0; }
+  .card h3 { margin:0 0 6px; font-size:15px; }
+  .card p { margin:4px 0; font-size:13.5px; line-height:1.45; }
+  .card.wide { grid-column:1/-1; }
+  .card.bad { border-color:var(--errline); background:var(--errbg); }
+  .big { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .big b { font-size:28px; font-variant-numeric:tabular-nums; color:var(--ok); }
+  .big span { color:var(--muted); }
+  table { border-collapse:collapse; width:100%; font-size:12.5px; }
+  td, th { padding:3px 6px 3px 0; text-align:left; border-bottom:1px solid var(--rowline); vertical-align:top; }
+  th { color:var(--muted); font-weight:600; }
+  td.n, th.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .sw { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; vertical-align:-1px; }
+  ol, ul { margin:4px 0; padding-left:20px; font-size:13.5px; line-height:1.45; }
+  li { margin:3px 0; }
+  .advice li b { font-variant-numeric:tabular-nums; }
+  .advice button { flex:none; padding:1px 8px; margin-left:6px; font:600 12px system-ui; border:1px solid var(--accent); color:var(--accent); background:transparent; border-radius:9px; }
+  .error { grid-column:1/-1; color:var(--err); background:var(--errbg); border:1px solid var(--errline); padding:8px 10px; border-radius:6px; }
+  .chart { width:100%; height:auto; display:block; margin:6px 0 2px; color:var(--ink); }
+  .chart text { fill:var(--muted); font:11px system-ui, sans-serif; }
+  .chart .lbl { fill:var(--ink); font-weight:600; }
+  .muted { color:var(--muted); }
+  .note { font-size:12px; color:var(--muted); }
+
+  #guide { position:absolute; inset:44px 12px 12px; overflow-y:auto; padding:14px 18px; border:1px solid var(--line); border-radius:8px; background:var(--panel); font-size:13.5px; line-height:1.5; z-index:1; }
+  #guide[hidden] { display:none; }
+  #guide h2 { font-size:18px; margin:0 0 4px; } #guide h3 { font-size:14px; margin:14px 0 4px; }
+  #guide p { margin:4px 0; } #guide .cols { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:0 24px; }
+  #guide dl { margin:4px 0; } #guide dt { font-weight:600; margin-top:6px; } #guide dd { margin:0 0 0 14px; color:var(--muted); }
+  #guide svg { width:100%; max-width:560px; height:auto; display:block; color:var(--ink); }
+  #guide .close { float:right; flex:none; padding:3px 10px; font:500 12px system-ui; border:1px solid var(--line); color:var(--ink); background:transparent; }
+
+  @media (max-width:800px) {
+    body { height:auto; min-height:100dvh; }
+    main { display:flex; flex-direction:column; }
+    #right { display:contents; }
+    #view { order:1; height:52vh; height:52svh; min-height:280px; max-height:620px; flex:none; border-bottom:1px solid var(--line); }
+    #report { order:2; grid-template-columns:1fr; max-height:none; overflow:visible; }
+    #form { order:3; overflow:visible; border-right:none; padding-left:calc(14px + var(--safe-l)); padding-right:calc(14px + var(--safe-r)); }
+    .actions { bottom:0; padding-bottom:calc(8px + var(--safe-b)); z-index:2; }
+    #status { max-width:calc(100% - 24px); top:auto; bottom:10px; }
+    header nav .long { display:none; }
+    #guide { position:fixed; z-index:50; inset:calc(8px + var(--safe-t)) 8px calc(8px + var(--safe-b)) 8px; box-shadow:0 10px 40px rgba(0,0,0,.45); }
+    #guide .close { position:sticky; top:0; min-height:36px; }
+  }
+  @media (pointer:coarse) {
+    body { font-size:15px; }
+    input[type=number], select { font-size:16px; padding:8px 9px; min-height:40px; }
+    button, a.btn { min-height:46px; font-size:15px; }
+    #viewopts button { min-height:30px; font-size:14px; }
+  }
+</style>
+<script>
+  try { const t = localStorage.getItem('theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch {}
+</script>
+<script type="importmap">
+{ "imports": {
+  "three": "./static/vendor/three/build/three.module.js",
+  "three/addons/": "./static/vendor/three/examples/jsm/"
+} }
+</script>
+</head>
+<body class="beginner">
+<header><h1>Trebuchet Builder</h1><nav><a href="https://quiverdesignworks.net/#apps">← Quiver<span class="long"> Design Works</span></a><a class="long" href="https://rocket.quiverdesignworks.net/">Rocket Builder</a></nav><span class="units">Beta · units mm</span><button id="theme" type="button"></button></header>
+<main>
+  <form id="form" autocomplete="off">
+    <div id="modebar" role="group" aria-label="Mode">
+      <button type="button" data-mode="beginner" aria-pressed="true">Beginner</button>
+      <button type="button" data-mode="advanced" aria-pressed="false">Advanced</button>
+    </div>
+    <div id="modehint"></div>
+
+    <div class="step"><span class="n">1</span>How big?</div>
+    <p class="why">The <b>arm</b> is the long stick that throws. A longer arm throws farther but needs a bigger printer.</p>
+    <div class="row"><input type="range" class="slider" id="arm_slider" min="140" max="320" step="5"><input type="number" id="arm_length" name="arm_length" min="120" max="400" step="5"></div>
+    <p class="conv" id="armconv"></p>
+
+    <div class="step"><span class="n">2</span>Your printer</div>
+    <p class="why">The biggest part has to fit on your printer's bed. Pick the size of your bed (the shorter side).</p>
+    <label>Print bed size <select id="print_bed" name="print_bed">
+      <option value="180">180 mm (A1 mini, Mini+)</option><option value="220">220 mm (Ender 3, MK3)</option>
+      <option value="250">250 mm (MK4, X1, P1, A1)</option><option value="300">300 mm (big printers)</option></select></label>
+
+    <div class="step"><span class="n">3</span>Counterweight</div>
+    <p class="why">The <b>counterweight</b> falls and swings the arm. More weight throws farther, up to a point. It fills a printed bucket.</p>
+    <div class="row"><input type="range" class="slider" id="cw_slider" min="100" max="1500" step="25"><input type="number" id="cw_mass" name="cw_mass" min="50" max="3000" step="25"></div>
+    <label>Fill it with <select id="cw_fill" name="cw_fill"></select></label>
+    <p class="conv" id="cwconv"></p>
+
+    <div class="step"><span class="n">4</span>What will it throw?</div>
+    <p class="why">Light, small things go farthest. A heavy thing needs more counterweight.</p>
+    <div class="choices" id="projchoices"></div>
+    <div id="customproj" class="adv" hidden>
+      <label>Diameter (mm) <input type="number" id="projectile_diameter" name="projectile_diameter" min="5" max="60" step="0.5"></label>
+      <label>Mass (g) <input type="number" id="projectile_mass" name="projectile_mass" min="0.2" max="100" step="0.1"></label>
+    </div>
+
+    <div class="step"><span class="n">5</span>Sling length</div>
+    <p class="why">The <b>sling</b> is a string with a pouch that whips the projectile. Compared with the long side of the arm, about 0.8 is a good start.</p>
+    <div class="row"><input type="range" class="slider" id="sling_slider" min="0.5" max="1.2" step="0.05"><input type="number" id="sling_ratio" name="sling_ratio" min="0.4" max="1.4" step="0.05"></div>
+    <p class="conv" id="slingconv"></p>
+
+    <fieldset class="adv"><legend>Advanced</legend>
+      <label>Arm ratio (long : short) <input type="number" id="arm_ratio" name="arm_ratio" min="2" max="6" step="0.1"></label>
+      <label class="check">Release at the best angle <input type="checkbox" id="auto_release" checked></label>
+      <label>Release angle (°) <input type="number" id="release_angle" name="release_angle" min="5" max="120" step="1" disabled></label>
+      <p class="hint">Sling-to-arm angle when the ring slides off the pin: the pin's bend.</p>
+      <label>Start angle (° below level) <input type="number" id="start_angle" name="start_angle" min="25" max="70" step="1"></label>
+      <label>Bucket width (mm) <input type="number" id="bucket_width" name="bucket_width" min="30" max="120" step="1"></label>
+      <label>Arm thickness (mm) <input type="number" id="arm_thickness" name="arm_thickness" min="6" max="20" step="0.5"></label>
+      <label>Axle <select id="axle" name="axle"></select></label>
+      <label>Infill (for weights) <input type="number" id="infill" name="infill" min="0" max="1" step="0.05"></label>
+    </fieldset>
+
+    <div class="step"><span class="n">6</span>Build it</div>
+    <div class="actions">
+      <p id="live" aria-live="polite"></p>
+      <p id="dirty" hidden>Settings changed. Press <b>Build</b> to update the model and files.</p>
+      <button type="submit" id="build">Build</button>
+      <a class="btn off" id="zip" href="#" download>Download STLs (ZIP)</a>
+    </div>
+    <p class="note">Files are for your personal use: print them for yourself, don't share or sell them. <a href="terms" target="_blank">Terms</a></p>
+  </form>
+  <section id="right">
+    <div id="view">
+      <div id="progress" hidden><div></div></div>
+      <div id="status">Set the options and press Build.</div>
+      <div id="viewopts">
+        <button type="button" id="play" class="go" disabled>▶ Throw</button>
+        <label><input type="checkbox" id="slowmo" checked> Slow motion</label>
+        <button type="button" id="guidebtn">Guide</button>
+      </div>
+      <div id="guide">
+        <button type="button" class="close" id="guideclose">Close</button>
+        <h2>Build your own trebuchet</h2>
+        <p>A <b>trebuchet</b> is a medieval siege machine: a heavy weight falls, swings a long arm, and a sling on the end of the arm flings a stone. This one is desk-sized: you print the parts, add a few screws, a bolt, some string, and it throws a small ball several metres.</p>
+        <figure>
+          <svg viewBox="0 0 520 200" aria-label="Side view of a trebuchet">
+            <line x1="40" y1="180" x2="480" y2="180" stroke="currentColor" stroke-width="2" opacity=".4"/>
+            <path d="M150 180 L250 60 L350 180" fill="none" stroke="#2f6fd6" stroke-width="8" stroke-linejoin="round"/>
+            <line x1="250" y1="60" x2="110" y2="150" stroke="#d24a3a" stroke-width="8" stroke-linecap="round"/>
+            <line x1="250" y1="60" x2="290" y2="34" stroke="#d24a3a" stroke-width="8" stroke-linecap="round"/>
+            <line x1="292" y1="34" x2="292" y2="70" stroke="#8a5cc2" stroke-width="3"/>
+            <rect x="272" y="70" width="40" height="46" fill="#8a5cc2" rx="3"/>
+            <path d="M110 150 Q 170 178 236 172" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <circle cx="240" cy="170" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="250" cy="60" r="5" fill="currentColor"/>
+            <text x="320" y="96" font-size="12" fill="currentColor">counterweight</text>
+            <text x="262" y="56" font-size="12" fill="currentColor">axle</text>
+            <text x="120" y="120" font-size="12" fill="currentColor">arm</text>
+            <text x="150" y="196" font-size="12" fill="currentColor">sling</text>
+            <text x="252" y="160" font-size="12" fill="currentColor">projectile</text>
+            <path d="M330 50 a 50 50 0 0 0 -60 -26" fill="none" stroke="currentColor" stroke-width="1.2" marker-end="url(#ah)"/>
+            <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+          </svg>
+        </figure>
+        <h3>How to use this page</h3>
+        <ol>
+          <li>Go through the numbered steps on the left. The estimated throw updates as you change things.</li>
+          <li>Press <b>Build</b>: the 3D model appears with a full report underneath. Press <b>▶ Throw</b> to watch it swing.</li>
+          <li>Download the ZIP: the parts to print, a shopping list and the step-by-step build notes.</li>
+        </ol>
+        <div class="cols">
+          <div>
+            <h3>What makes it throw farther</h3>
+            <dl>
+              <dt>Counterweight</dt><dd>The energy comes from the weight falling. Double the weight, roughly double the energy. Very heavy weights strain the parts.</dd>
+              <dt>Weight ratio</dt><dd>Counterweight ÷ projectile. Above about 100 : 1 the arm can't swing any faster, so extra weight helps less and less.</dd>
+              <dt>Arm ratio</dt><dd>Long side ÷ short side. Around 3.5–4.5 : 1 usually works best for a hinged counterweight.</dd>
+              <dt>Sling length</dt><dd>A longer sling acts like a longer arm, but too long and it drags. Try 0.7–1.0 × the long side.</dd>
+              <dt>Release angle</dt><dd>When the ring slides off the pin. Too early and the shot goes up or backwards; too late and it hits the ground. Bend the pin to tune it; the report suggests an angle and a printed gauge helps you bend it.</dd>
+              <dt>Friction</dt><dd>Bearings on the axle and a smooth trough help. A loose, wobbly machine wastes energy.</dd>
+            </dl>
+          </div>
+          <div>
+            <h3>Key terms</h3>
+            <dl>
+              <dt>Axle (pivot)</dt><dd>The bolt the arm swings on, held by two A-shaped frames.</dd>
+              <dt>Hinged counterweight</dt><dd>The weight hangs from a hinge instead of being fixed to the arm. It falls more straight down, so more of its energy reaches the projectile.</dd>
+              <dt>Trough</dt><dd>The flat track the projectile slides along before the sling lifts it.</dd>
+              <dt>Release pin</dt><dd>A short bent pin at the tip of the arm. One end of the sling has a ring that slides off it to let go.</dd>
+              <dt>Trigger</dt><dd>A pin and cord that hold the arm down until you pull it.</dd>
+              <dt>Efficiency</dt><dd>How much of the falling weight's energy ends up in the projectile. Good trebuchets reach 60–75%.</dd>
+            </dl>
+          </div>
+        </div>
+        <h3>About the estimate</h3>
+        <p>The page simulates the swing: the falling counterweight, the arm, the sling dragging the ball along the trough, the ball swinging free, the release and the flight with air drag. It doesn't model friction, stretchy string or a bendy arm, so real throws land shorter: the report shows the model's number and the range to <b>expect</b> (60–85% of it). Distances are measured from the axle, landing at table height.</p>
+        <h3>Safety</h3>
+        <p>It throws hard enough to hurt. Grown-up supervision, safety glasses, never aim at people or animals, and keep hands out of the arm's swing.</p>
+      </div>
+    </div>
+    <div id="report"></div>
+  </section>
+</main>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const form = $('form'), statusEl = $('status'), reportEl = $('report'), buildBtn = $('build'), zipBtn = $('zip');
+const IN = 25.4, FT = 3.28084;
+let OPTS = null, lastPlan = null, lastBuild = null;
+
+// ---------- form ----------
+const NUM_FIELDS = ['arm_length', 'arm_ratio', 'sling_ratio', 'cw_mass', 'projectile_diameter', 'projectile_mass',
+  'release_angle', 'start_angle', 'print_bed', 'infill', 'bucket_width', 'arm_thickness'];
+let projectile = 'printed_ball';
+function params() {
+  const p = {};
+  for (const k of NUM_FIELDS) { const v = $(k).value; if (v !== '') p[k] = Number(v); }
+  if ($('auto_release').checked) p.release_angle = null;
+  p.cw_fill = $('cw_fill').value; p.axle = $('axle').value; p.projectile = projectile;
+  return p;
+}
+function setForm(p) {
+  for (const k of NUM_FIELDS) if (p[k] != null) $(k).value = p[k];
+  $('auto_release').checked = p.release_angle == null; $('release_angle').disabled = p.release_angle == null;
+  if (p.release_angle == null) $('release_angle').value = '';
+  $('cw_fill').value = p.cw_fill; $('axle').value = p.axle; projectile = p.projectile;
+  $('arm_slider').value = p.arm_length; $('cw_slider').value = p.cw_mass; $('sling_slider').value = p.sling_ratio;
+  renderProjectiles(); conversions();
+}
+const pair = (slider, box) => {
+  $(slider).addEventListener('input', () => { $(box).value = $(slider).value; changed(); });
+  $(box).addEventListener('input', () => { $(slider).value = $(box).value; });
+};
+pair('arm_slider', 'arm_length'); pair('cw_slider', 'cw_mass'); pair('sling_slider', 'sling_ratio');
+$('auto_release').onchange = () => {
+  const auto = $('auto_release').checked;
+  $('release_angle').disabled = auto;
+  if (!auto && !$('release_angle').value && lastPlan) $('release_angle').value = Math.round(lastPlan.throw.best_release_angle_deg || 45);
+  changed();
+};
+
+const PROJ_ICON = {
+  printed_ball: '<svg viewBox="0 0 46 46"><circle cx="23" cy="25" r="11" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 25h22M23 14v22" stroke="currentColor" stroke-width="1" opacity=".5"/></svg>',
+  marble: '<svg viewBox="0 0 46 46"><circle cx="23" cy="25" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M17 23q6-6 12 4" fill="none" stroke="#2f6fd6" stroke-width="2"/></svg>',
+  ping_pong: '<svg viewBox="0 0 46 46"><circle cx="23" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+  foam_ball: '<svg viewBox="0 0 46 46"><circle cx="23" cy="25" r="12" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 2"/></svg>',
+  mini_marshmallow: '<svg viewBox="0 0 46 46"><rect x="14" y="17" width="18" height="16" rx="5" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+  custom: '<svg viewBox="0 0 46 46"><text x="23" y="30" text-anchor="middle" font-size="18" fill="currentColor">?</text></svg>',
+};
+function renderProjectiles() {
+  const el = $('projchoices');
+  el.innerHTML = Object.entries(OPTS.projectiles).map(([k, v]) => {
+    const sub = v.mass ? `${v.diameter} mm · ${v.mass} g` : (k === 'printed_ball' ? `${v.diameter} mm · printed` : 'your own');
+    return `<button type="button" class="${k === 'custom' ? 'adv' : ''}" data-p="${k}" aria-pressed="${k === projectile}">${PROJ_ICON[k] || ''}${esc(v.label.replace(/ \(.*\)/, ''))}<small>${sub}</small></button>`;
+  }).join('');
+  el.querySelectorAll('button').forEach(b => b.onclick = () => { projectile = b.dataset.p; renderProjectiles(); changed(); });
+  $('customproj').hidden = projectile !== 'custom';
+}
+function conversions() {
+  const L = Number($('arm_length').value) || 0, r = Number($('arm_ratio').value) || 4, s = Number($('sling_ratio').value) || 0.8;
+  const long = L * r / (1 + r);
+  $('armconv').innerHTML = `<b>${(L / 10).toFixed(1)} cm</b> (${(L / IN).toFixed(1)} in): long side ${Math.round(long)} mm, short side ${Math.round(L - long)} mm` +
+    (lastPlan ? `<br>Machine about <b>${lastPlan.summary.base_length_mm} × ${lastPlan.summary.width_mm} mm</b>, ${lastPlan.summary.height_mm} mm tall` : '');
+  $('slingconv').innerHTML = `Sling <b>${Math.round(s * long)} mm</b> (${(s * long / IN).toFixed(1)} in) from the tip to the pouch`;
+  const g = Number($('cw_mass').value) || 0, fill = $('cw_fill').value;
+  const each = { steel_bb: [0.35, 'BBs'], coins: [2.5, 'pennies'], nuts: [5, 'M5 nuts'], sand: [null], rice: [null] }[fill] || [null];
+  const cm3 = OPTS ? g / OPTS.fill_density[fill] : 0;
+  $('cwconv').innerHTML = `<b>${g} g</b> (${(g / 28.35).toFixed(1)} oz)` + (each[0] ? `, about ${Math.round(g / each[0])} ${each[1]}` : '') + `, about ${Math.round(cm3)} cm³`;
+}
+
+// ---------- modes ----------
+function setMode(m) {
+  document.body.classList.toggle('beginner', m === 'beginner');
+  document.querySelectorAll('#modebar button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === m)));
+  $('modehint').textContent = m === 'beginner' ? 'Six steps. Advanced adds the arm ratio, release angle, start angle and more.'
+                                                : 'Every setting. The numbered steps still apply.';
+  if (m === 'beginner') {  // Beginner sends the defaults for everything it hides
+    const d = OPTS.defaults;
+    for (const k of ['arm_ratio', 'start_angle', 'bucket_width', 'arm_thickness', 'infill']) $(k).value = d[k];
+    $('axle').value = d.axle; $('auto_release').checked = true; $('release_angle').disabled = true; $('release_angle').value = '';
+    if (projectile === 'custom') projectile = d.projectile;
+    renderProjectiles(); changed();
+  }
+}
+document.querySelectorAll('#modebar button').forEach(b => b.onclick = () => setMode(b.dataset.mode));
+
+// ---------- live estimate (no geometry) ----------
+let planTimer = null, planSeq = 0;
+function changed() {
+  conversions();
+  if (lastBuild) { $('dirty').hidden = false; buildBtn.classList.add('attention'); zipBtn.classList.add('off'); }
+  clearTimeout(planTimer);
+  planTimer = setTimeout(livePlan, 250);
+}
+form.addEventListener('input', e => { if (!e.target.closest('#viewopts')) changed(); });
+form.addEventListener('change', e => { if (e.target.tagName === 'SELECT') changed(); });
+async function livePlan() {
+  const seq = ++planSeq, live = $('live');
+  try {
+    const res = await fetch('api/plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(params()) });
+    const body = await res.json();
+    if (seq !== planSeq) return;
+    if (!res.ok) { live.className = 'bad'; live.innerHTML = `<b>Can't build this:</b> ${esc(detail(body))}`; lastPlan = null; return; }
+    lastPlan = body; conversions();
+    const t = body.throw;
+    live.className = t.ok ? '' : 'bad';
+    live.innerHTML = t.ok ? `Estimated throw: <b>${t.expected_m[0]}–${t.expected_m[1]} m</b> (${Math.round(t.expected_m[0] * FT)}–${Math.round(t.expected_m[1] * FT)} ft)`
+                          : `<b>Won't throw:</b> ${esc(t.problem)}`;
+  } catch { if (seq === planSeq) live.textContent = ''; }
+}
+const detail = body => typeof body.detail === 'string' ? body.detail : (body.detail || []).map(d => `${d.loc.at(-1)}: ${d.msg}`).join('; ');
+
+// ---------- viewer ----------
+const view = $('view');
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+view.prepend(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(35, 1, 1, 20000);
+camera.up.set(0, 0, 1);  // the generator is Z-up
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+const hemi = new THREE.HemisphereLight(0xffffff, 0x8890a0, 1.6); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(300, -400, 600); scene.add(sun);
+const fill2 = new THREE.DirectionalLight(0xffffff, 0.5); fill2.position.set(-300, 300, -200); scene.add(fill2);
+let model = null, rig = null, dirty = true;
+const invalidate = () => { dirty = true; };
+controls.addEventListener('change', invalidate);
+renderer.setAnimationLoop(() => {
+  const animating = rig && rig.playing && stepThrow();
+  if (controls.update() || dirty || animating) { dirty = false; renderer.render(scene, camera); }
+});
+function resize() {
+  const w = Math.max(1, view.clientWidth), h = Math.max(1, view.clientHeight);
+  renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); invalidate();
+}
+new ResizeObserver(resize).observe(view); resize();
+
+const themeBtn = $('theme'), darkMq = matchMedia('(prefers-color-scheme: dark)');
+const isLight = () => (document.documentElement.dataset.theme || (darkMq.matches ? 'dark' : 'light')) === 'light';
+function applyTheme() { themeBtn.textContent = isLight() ? 'Dark mode' : 'Light mode'; hemi.groundColor.set(isLight() ? 0x8890a0 : 0x404858); invalidate(); }
+themeBtn.onclick = () => { const n = isLight() ? 'dark' : 'light'; document.documentElement.dataset.theme = n; try { localStorage.setItem('theme', n); } catch {} applyTheme(); };
+darkMq.addEventListener?.('change', applyTheme); applyTheme();
+
+function frame(obj) {
+  const box = new THREE.Box3().setFromObject(obj);
+  const c = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3());
+  const t = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+  const dist = 1.25 * Math.max(size.z / 2 / t, Math.max(size.x, size.y) / 2 / (t * camera.aspect)) + Math.max(size.x, size.y) / 2;
+  controls.target.copy(c);
+  camera.position.copy(c).add(new THREE.Vector3(0.9, -1.4, 0.45).normalize().multiplyScalar(dist));
+  camera.near = dist / 100; camera.far = dist * 20; camera.updateProjectionMatrix();
+}
+
+async function showModel(url, r) {
+  const gltf = await new GLTFLoader().loadAsync(url);
+  if (model) scene.remove(model);
+  model = gltf.scene;
+  const byName = Object.fromEntries(r.parts.map(p => [p.name, p]));
+  const meshes = [];
+  model.traverse(o => {
+    if (!o.isMesh) return;
+    const name = (o.name || o.parent?.name || '').split('#')[0];
+    const p = byName[name];
+    o.material = new THREE.MeshStandardMaterial({ color: new THREE.Color(...(p ? p.color : [0.7, 0.7, 0.7])),
+      roughness: p?.hardware ? 0.35 : 0.55, metalness: p?.hardware ? 0.6 : 0.05, side: THREE.DoubleSide });
+    o.geometry.computeVertexNormals();
+    meshes.push({ mesh: o, role: p ? p.role : 'static' });
+  });
+  scene.add(model);
+  model.updateMatrixWorld(true);
+  frame(model);  // before the rig adds the flight trail, which is metres long
+  buildRig(meshes, r.anim);
+  invalidate();
+}
+
+// ---------- the throw, animated ----------
+// Physics angles are in the X-Z plane, counter-clockwise from +X. A rotation
+// by d about the axle is rotation.y = -d in three.js (which turns z toward x).
+function buildRig(meshes, a) {
+  const arm = new THREE.Group(); arm.position.set(0, 0, a.H); model.add(arm);
+  const hinge0 = hingeAt(a, a.theta0);
+  const bucket = new THREE.Group(); bucket.position.set(hinge0.x, 0, hinge0.z); model.add(bucket);
+  let ballMesh = null;
+  for (const { mesh, role } of meshes) {
+    if (role === 'arm') arm.attach(mesh);
+    else if (role === 'bucket') bucket.attach(mesh);
+    else if (role === 'projectile') ballMesh = mesh;
+  }
+  if (ballMesh) ballMesh.visible = false;  // replaced by a ball that moves
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(a.r_p, 24, 16), new THREE.MeshStandardMaterial({ color: 0xf2f2f2, roughness: 0.5 }));
+  model.add(ball);
+  const sling = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]),
+    new THREE.LineBasicMaterial({ color: 0x8a6a3a }));
+  model.add(sling);
+  const pathPts = (a.path || []).map(([x, z]) => new THREE.Vector3(x * 1000, 0, z * 1000));
+  const trail = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pathPts.length ? pathPts : [new THREE.Vector3()]),
+    new THREE.LineDashedMaterial({ color: 0x0a58ca, dashSize: 6, gapSize: 4 }));
+  trail.computeLineDistances(); trail.visible = false; model.add(trail);
+  rig = { a, arm, bucket, ball, sling, trail, playing: false, t0: 0 };
+  pose(a.frames[0] || [0, a.theta0, a.psi0, 0]);
+  $('play').disabled = !(a.frames && a.frames.length > 1);
+}
+function hingeAt(a, th) { return { x: -a.L2 * Math.cos(th), z: a.H - a.L2 * Math.sin(th) }; }
+function pose([, th, psi, sg]) {
+  const { a, arm, bucket, ball, sling } = rig;
+  arm.rotation.y = -(th - a.theta0);
+  const h = hingeAt(a, th);
+  bucket.position.set(h.x, 0, h.z); bucket.rotation.y = -(psi - a.psi0);
+  const tip = new THREE.Vector3(a.L1 * Math.cos(th), 0, a.H + a.L1 * Math.sin(th));
+  const b = tip.clone().add(new THREE.Vector3(a.Ls * Math.cos(sg), 0, a.Ls * Math.sin(sg)));
+  ball.position.copy(b);
+  sling.geometry.setFromPoints([tip, b]); sling.visible = true;
+  invalidate();
+}
+function stepThrow() {
+  const { a } = rig, F = a.frames, slow = $('slowmo').checked ? 8 : 1;
+  const t = (performance.now() - rig.t0) / 1000 / slow;
+  const tRel = F[F.length - 1][0];
+  if (t <= tRel) {
+    let i = 0; while (i < F.length - 2 && F[i + 1][0] < t) i++;
+    const f0 = F[i], f1 = F[i + 1], u = Math.min(1, Math.max(0, (t - f0[0]) / ((f1[0] - f0[0]) || 1)));
+    pose(f0.map((v, k) => v + (f1[k] - v) * u));
+    return true;
+  }
+  // After release: the ball follows the flight path (10 ms samples) for a while.
+  const k = Math.floor((t - tRel) / 0.01), P = a.path;
+  rig.sling.visible = false; rig.trail.visible = true;
+  if (P && k < P.length && t - tRel < 0.6) { rig.ball.position.set(P[k][0] * 1000, 0, P[k][1] * 1000); return true; }
+  rig.playing = false;
+  setTimeout(() => { if (rig && !rig.playing) { rig.trail.visible = false; pose(a.frames[0]); } }, 2500);
+  return true;
+}
+$('play').onclick = () => { if (!rig) return; rig.playing = true; rig.t0 = performance.now(); rig.trail.visible = false; };
+
+// ---------- guide ----------
+const guide = $('guide');
+$('guidebtn').onclick = () => { guide.hidden = !guide.hidden; };
+$('guideclose').onclick = () => { guide.hidden = true; };
+
+// ---------- report ----------
+const m1 = x => x == null ? '–' : (Math.round(x * 10) / 10).toString();
+function flightSvg(t) {
+  const P = t.path || []; if (!P.length) return '';
+  const W = 520, H = 170, pad = 28;
+  const maxX = Math.max(1, ...P.map(p => p[0])), maxZ = Math.max(0.3, ...P.map(p => p[1]));
+  const sx = x => pad + (x / maxX) * (W - 2 * pad), sz = z => H - pad - (z / maxZ) * (H - 2 * pad);
+  const d = P.map((p, i) => `${i ? 'L' : 'M'}${sx(p[0]).toFixed(1)} ${sz(p[1]).toFixed(1)}`).join(' ');
+  const last = P[P.length - 1];
+  const ticks = []; const step = maxX > 12 ? 5 : maxX > 5 ? 2 : 1;
+  for (let x = 0; x <= maxX; x += step) ticks.push(`<line x1="${sx(x)}" y1="${H - pad}" x2="${sx(x)}" y2="${H - pad + 4}" stroke="currentColor" opacity=".5"/><text x="${sx(x)}" y="${H - pad + 16}" text-anchor="middle">${x} m</text>`);
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Flight path">
+    <line x1="${pad}" y1="${H - pad}" x2="${W - pad}" y2="${H - pad}" stroke="currentColor" opacity=".4"/>${ticks.join('')}
+    <path d="M${sx(0) - 6} ${H - pad} L${sx(0)} ${H - pad - 14} L${sx(0) + 6} ${H - pad}z" fill="currentColor" opacity=".6"/>
+    <path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2"/>
+    <text class="lbl" x="${Math.min(W - pad, sx(last[0]))}" y="${H - pad - 6}" text-anchor="end">${m1(last[0])} m</text>
+    <text x="${sx(P[0][0]) + 8}" y="${sz(maxZ) + 12}">peak ${m1(t.peak_height_m)} m</text></svg>`;
+}
+function sweepSvg(t) {
+  const S = (t.sweep || []).filter(s => s[1] > -5); if (S.length < 3) return '';
+  const W = 520, H = 150, pad = 30;
+  const xs = S.map(s => s[0]), ys = S.map(s => s[1]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(0, ...ys), y1 = Math.max(...ys);
+  const sx = x => pad + (x - x0) / ((x1 - x0) || 1) * (W - 2 * pad), sy = y => H - pad - (y - y0) / ((y1 - y0) || 1) * (H - 2 * pad);
+  const d = [...S].sort((a, b) => a[0] - b[0]).map((s, i) => `${i ? 'L' : 'M'}${sx(s[0]).toFixed(1)} ${sy(s[1]).toFixed(1)}`).join(' ');
+  const mark = (a, r, lbl) => `<circle cx="${sx(a)}" cy="${sy(r)}" r="4" fill="var(--accent)"/><text class="lbl" x="${sx(a)}" y="${sy(r) - 8}" text-anchor="middle">${lbl}</text>`;
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Distance by release angle">
+    <line x1="${pad}" y1="${sy(0)}" x2="${W - pad}" y2="${sy(0)}" stroke="currentColor" opacity=".3"/>
+    <path d="${d}" fill="none" stroke="currentColor" stroke-width="1.6"/>
+    ${mark(t.release_angle_deg, t.range_m, `${Math.round(t.release_angle_deg)}°`)}
+    <text x="${pad}" y="${H - 8}">${Math.round(x0)}° (late)</text><text x="${W - pad}" y="${H - 8}" text-anchor="end">${Math.round(x1)}° (early)</text>
+    <text x="${pad}" y="${sy(y1) + 4}">${m1(y1)} m</text></svg>`;
+}
+function showReport(r) {
+  const t = r.throw, s = r.summary, cards = [];
+  if (r.bed_problems?.length) cards.push(`<div class="card wide bad"><h3>Doesn't fit your printer</h3><ul>${r.bed_problems.map(x => `<li>${esc(x)}</li>`).join('')}</ul><p>Try a shorter arm or a bigger print bed setting.</p></div>`);
+  if (t.ok) {
+    cards.push(`<div class="card"><h3>Test throw</h3>
+      <div class="big"><b>${t.expected_m[0]}–${t.expected_m[1]} m</b><span>${Math.round(t.expected_m[0] * FT)}–${Math.round(t.expected_m[1] * FT)} ft</span></div>
+      <p class="muted">Expected on the table. The model, without friction, says ${m1(t.range_m)} m.</p>
+      ${flightSvg(t)}
+      <table><tr><td>Release speed</td><td class="n">${m1(t.release_speed_ms)} m/s (${Math.round(t.release_speed_ms * 2.237)} mph)</td></tr>
+      <tr><td>Launch angle</td><td class="n">${Math.round(t.launch_angle_deg)}° up</td></tr>
+      <tr><td>Highest point</td><td class="n">${m1(t.peak_height_m)} m</td></tr>
+      <tr><td>Time in the air</td><td class="n">${m1(t.flight_time_s)} s</td></tr>
+      <tr><td>Swing to release</td><td class="n">${Math.round(t.release_t * 1000)} ms</td></tr>
+      <tr><td>Efficiency</td><td class="n">${Math.round(t.efficiency * 100)}% of the weight's energy</td></tr>
+      <tr><td>Peak pull on the sling</td><td class="n">${m1(t.sling_pull_n)} N (${Math.round(t.sling_pull_n / 9.81 * 1000)} g)</td></tr></table></div>`);
+    cards.push(`<div class="card"><h3>Release angle</h3>
+      <p>The release pin is bent to <b>${Math.round(t.release_angle_deg)}°</b>${t.auto_release ? ', the best angle for this design' : ` (the best is ${Math.round(t.best_release_angle_deg)}°, ${m1(t.best_range_m)} m)`}. The printed gauge in the kit is cut to it.</p>
+      ${sweepSvg(t)}
+      <p class="note">Distance by the angle between sling and arm when the ring slides off. Bigger angle = lets go earlier, higher shot.</p></div>`);
+  } else {
+    cards.push(`<div class="card bad"><h3>It won't throw yet</h3><p>${esc(t.problem)}</p></div>`);
+  }
+  cards.push(`<div class="card"><h3>Your trebuchet</h3><table>
+    <tr><td>Size</td><td class="n">${s.base_length_mm} × ${s.width_mm} mm, ${s.height_mm} mm tall</td></tr>
+    <tr><td>Arm</td><td class="n">${s.long_arm_mm} + ${s.short_arm_mm} mm (${(s.long_arm_mm / s.short_arm_mm).toFixed(1)} : 1)</td></tr>
+    <tr><td>Axle height</td><td class="n">${s.axle_height_mm} mm</td></tr>
+    <tr><td>Sling</td><td class="n">${s.sling_mm} mm</td></tr>
+    <tr><td>Counterweight</td><td class="n">${s.fill_g} g fill (${s.counterweight_g} g with bucket)</td></tr>
+    <tr><td>Bucket (outside)</td><td class="n">${s.bucket_mm.join(' × ')} mm</td></tr>
+    <tr><td>Projectile</td><td class="n">${esc(s.projectile)}, ${s.projectile_g} g</td></tr>
+    <tr><td>Weight ratio</td><td class="n">${s.mass_ratio} : 1</td></tr>
+    <tr><td>Arm starts</td><td class="n">${s.start_angle_deg}° below level</td></tr>
+    <tr><td>Energy stored</td><td class="n">${t.energy_j} J</td></tr></table>
+    ${(r.notes || []).map(n => `<p class="note">${esc(n)}</p>`).join('')}</div>`);
+  if (r.advice?.length) cards.push(`<div class="card advice"><h3>How to throw farther</h3><ol>${r.advice.map((a, i) =>
+    `<li>${esc(a.change)}: about <b>${m1(a.range_m)} m</b> in the model<button type="button" data-i="${i}">Try it</button></li>`).join('')}</ol>
+    <p class="note">Model distances (before friction). Heavier counterweights work the parts harder.</p></div>`);
+  if (r.parts) {
+    const printed = r.parts.filter(p => !p.hardware);
+    cards.push(`<div class="card wide"><h3>Parts to print</h3><table><tr><th>Part</th><th class="n">Qty</th><th class="n">Grams</th><th class="n">Size (mm)</th><th>How to print</th></tr>
+      ${printed.map(p => `<tr><td><span class="sw" style="background:rgb(${p.color.map(c => Math.round(c * 255)).join(',')})"></span>${esc(p.name.replace(/_/g, ' '))}<br><span class="note">${esc(p.purpose)}</span></td><td class="n">${p.qty}</td><td class="n">${p.mass_g}</td><td class="n">${p.size_mm.join(' × ')}</td><td>${esc(p.print)}</td></tr>`).join('')}
+      <tr><td><b>Total plastic</b></td><td></td><td class="n"><b>${r.plastic_g}</b></td><td></td><td></td></tr></table></div>`);
+  }
+  cards.push(`<div class="card wide"><h3>What else you need</h3><table><tr><th class="n">Qty</th><th>Item</th><th>What to get</th><th>Why</th></tr>
+    ${r.bom.map(i => `<tr><td class="n">${i.qty}</td><td>${esc(i.name)}</td><td>${esc(i.spec)}</td><td class="note">${esc(i.why)}</td></tr>`).join('')}</table>
+    <p class="note">Shopping links for these are coming soon.</p></div>`);
+  cards.push(`<div class="card wide"><h3>Putting it together</h3><ol>${r.steps.map(x => `<li>${esc(x)}</li>`).join('')}</ol></div>`);
+  cards.push(`<div class="card"><h3>Safety</h3><ul>${r.safety.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`);
+  reportEl.innerHTML = cards.join('');
+  reportEl.querySelectorAll('.advice button').forEach(b => b.onclick = () => {
+    const a = r.advice[Number(b.dataset.i)];
+    if (a.field === 'release_angle') { $('auto_release').checked = false; $('release_angle').disabled = false; }
+    if (['arm_ratio', 'start_angle', 'release_angle'].includes(a.field)) setMode('advanced');
+    $(a.field).value = a.value; setForm(params()); changed(); runBuild();
+  });
+}
+
+// ---------- build ----------
+const progEl = $('progress'), progBar = progEl.firstElementChild;
+let progTimer = null;
+function startProgress() {
+  const t0 = performance.now(); progEl.hidden = false; progBar.style.width = '0'; clearInterval(progTimer);
+  progTimer = setInterval(() => {
+    const t = (performance.now() - t0) / 1000;
+    progBar.style.width = `${(95 * (1 - Math.exp(-t / 4))).toFixed(1)}%`;
+    statusEl.textContent = `Building… ${Math.floor(t)} s`;
+  }, 200);
+}
+function stopProgress() { clearInterval(progTimer); progTimer = null; progBar.style.width = '100%'; setTimeout(() => { progEl.hidden = true; }, 400); }
+async function postBuild(p) {
+  for (let attempt = 0; ; attempt++) {
+    let res;
+    try {
+      res = await fetch('api/build', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(p) });
+      return { res, body: JSON.parse(await res.text()) };
+    } catch {
+      if (attempt === 0) { await new Promise(r => setTimeout(r, 4000)); continue; }
+      throw new Error(`The server didn't answer${res ? ` (${res.status})` : ''}. It may have just restarted; press Build again.`);
+    }
+  }
+}
+async function runBuild() {
+  if (!form.reportValidity()) return;
+  buildBtn.disabled = true; zipBtn.classList.add('off');
+  const t0 = performance.now();
+  startProgress();
+  try {
+    const { res, body } = await postBuild(params());
+    if (!res.ok) throw new Error(detail(body) || `Build failed (${res.status})`);
+    await showModel(`api/builds/${body.id}/preview.glb`, body);
+    stopProgress();
+    lastBuild = body; lastPlan = body; conversions();
+    guide.hidden = true;
+    showReport(body);
+    zipBtn.href = `api/builds/${body.id}/trebuchet.zip`;
+    zipBtn.classList.toggle('off', !!body.bed_problems.length);
+    $('dirty').hidden = true; buildBtn.classList.remove('attention');
+    statusEl.textContent = `Built ${body.parts.filter(p => !p.hardware).length} parts in ${((performance.now() - t0) / 1000).toFixed(1)} s · drag to rotate, scroll to zoom`;
+    if (body.throw.ok && !matchMedia('(prefers-reduced-motion: reduce)').matches) setTimeout(() => $('play').click(), 600);
+  } catch (err) {
+    stopProgress();
+    statusEl.textContent = 'Build failed';
+    reportEl.innerHTML = `<div class="error"><b>Can't build this trebuchet.</b> ${esc(err.message)}</div>`;
+  } finally {
+    buildBtn.disabled = false;
+  }
+}
+form.addEventListener('submit', e => { e.preventDefault(); runBuild(); });
+
+// ---------- start ----------
+(async () => {
+  OPTS = await (await fetch('api/options')).json();
+  $('cw_fill').innerHTML = Object.entries(OPTS.fills).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join('');
+  $('axle').innerHTML = Object.entries(OPTS.axles).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join('');
+  setForm(OPTS.defaults);
+  setMode('beginner');
+})();
+</script>
+</body>
+</html>

@@ -34,10 +34,10 @@ from trebgen.build import Plan, build as build_trebuchet, plan as plan_trebuchet
 from trebgen.export import glb, stl_bytes
 from trebgen.hardware import bill_of_materials
 from trebgen.instructions import PRINT_NOTES, SAFETY, assembly_steps
-from trebgen.params import AXLES, FILLS, PROJECTILES, DesignError, DesignParams, eff_density, projectile_of
+from trebgen.params import AXLES, FILLS, PROJECTILES, DesignError, DesignParams, eff_density, in_sentence, projectile_of
 from trebgen.physics import REAL_WORLD
 
-import terms
+import treb_terms as terms
 
 GENERATOR_VERSION = "0.1.0"
 SCHEMA_VERSION = 1
@@ -318,7 +318,7 @@ def _notes(b: dict) -> str:
     L = ["Trebuchet Builder build notes", "", terms.SHORT, "(See LICENSE.txt in this ZIP.)", "",
          f"Size: {s['base_length_mm']} × {s['width_mm']} mm base, axle {s['axle_height_mm']} mm up.",
          f"Arm: {s['long_arm_mm']} mm long side, {s['short_arm_mm']} mm short side; sling {s['sling_mm']} mm.",
-         f"Counterweight: {s['fill_g']} g of {s['fill'].lower()} ({s['counterweight_g']} g with the bucket).",
+         f"Counterweight: {s['fill_g']} g of {in_sentence(s['fill'])} ({s['counterweight_g']} g with the bucket).",
          f"Projectile: {s['projectile']}, {s['projectile_g']} g.", ""]
     if t["ok"]:
         L += [f"Estimated throw: {t['expected_m'][0]}-{t['expected_m'][1]} m on the table "
