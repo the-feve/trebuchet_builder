@@ -69,14 +69,6 @@ def links_by_key() -> dict[str, list[dict]]:
     return out
 
 
-def apps_nav(current: str = "trebuchet") -> str:
-    """The links to both builders, shared with the designer page's header."""
-    def a(name, url, key):
-        cur = ' aria-current="page" class="cur"' if key == current else ""
-        return f'<a href="{url}"{cur}>{name}</a>'
-    return a("Rocket Builder", ROCKET_URL, "rocket") + a("Trebuchet Builder", TREBUCHET_URL, "trebuchet")
-
-
 def _link(item: dict, store: str, inner: str) -> str:
     return f'<a href="{escape(amazon_url(item, store))}" target="_blank" rel="sponsored noopener">{inner}</a>'
 
@@ -113,7 +105,7 @@ def page() -> str:
                          f'<span class="cta">{"View" if it.get("asin") else "Find"} on Amazon ↗</span></span>') + "</li>")
         sections.append(f'<section id="{escape(c["id"])}"><h2><span class="hicon">{_icon(c["id"])}</span>{escape(c["title"])}</h2>'
                         f'<p>{escape(c["intro"])}</p><ul class="items">{"".join(cards)}</ul></section>')
-    return (_PAGE.replace("{{APPS}}", apps_nav()).replace("{{KIT}}", _starter_kit(store)).replace("{{TOC}}", toc)
+    return (_PAGE.replace("{{ROCKET}}", ROCKET_URL).replace("{{KIT}}", _starter_kit(store)).replace("{{TOC}}", toc)
             .replace("{{SECTIONS}}", "".join(sections)).replace("{{DISCLOSURE}}", DISCLOSURE))
 
 
@@ -122,29 +114,33 @@ _PAGE = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="icon" href="data:,">
+<link rel="icon" href="static/brand/tb-favicon.svg" type="image/svg+xml">
+<link rel="icon" href="static/brand/tb-favicon-32.png" type="image/png" sizes="32x32">
 <title>Order Trebuchet Supplies · Trebuchet Builder</title>
 <meta name="description" content="Bearings, bolts, screws, sling cord, counterweight fill, projectiles and filament for the 3D-printed desk trebuchet from Trebuchet Builder.">
 <style>
-  :root { color-scheme:light; --bg:#fff; --card:#f5f5f7; --ink:#1d1d1f; --muted:#6e6e73; --line:#e5e5ea; --accent:#0a58ca; --warn:#9a6700; }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme=light]) { color-scheme:dark; --bg:#111113; --card:#1c1c1f; --ink:#f2f2f4; --muted:#a1a1a6; --line:#2c2c30; --accent:#6ea8fe; --warn:#e3b341; } }
-  :root[data-theme=dark] { color-scheme:dark; --bg:#111113; --card:#1c1c1f; --ink:#f2f2f4; --muted:#a1a1a6; --line:#2c2c30; --accent:#6ea8fe; --warn:#e3b341; }
+  /* Rocket Builder's brand (Night, Paper, Sky; fonts self-hosted in static/fonts). */
+  @font-face { font-family:"Inter"; src:url(static/fonts/inter.woff2) format("woff2"); font-weight:100 900; font-style:normal; font-display:swap; }
+  @font-face { font-family:"Space Grotesk"; src:url(static/fonts/space-grotesk.woff2) format("woff2"); font-weight:300 700; font-style:normal; font-display:swap; }
+  :root { color-scheme:light; --bg:#FBF8F2; --panel:#FFFDF8; --card:#F6F1E7; --ink:#12203A; --muted:#6E6E73; --line:#E8E0CF; --accent:#1D5BC4; --warn:#8A5A00;
+    --head:"Space Grotesk", ui-sans-serif, system-ui, sans-serif; --body:"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --chamfer:polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme=light]) { color-scheme:dark; --bg:#0B1526; --panel:#12203A; --card:#1B2C4B; --ink:#F6F1E7; --muted:#A9B4C8; --line:#263A5E; --accent:#8BBBFE; --warn:#F0B44C; } }
+  :root[data-theme=dark] { color-scheme:dark; --bg:#0B1526; --panel:#12203A; --card:#1B2C4B; --ink:#F6F1E7; --muted:#A9B4C8; --line:#263A5E; --accent:#8BBBFE; --warn:#F0B44C; }
   * { box-sizing:border-box; }
   html { -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
-  body { margin:0; font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg); }
+  body { margin:0; font:16px/1.55 var(--body); color:var(--ink); background:var(--bg); }
+  h1, h2, h3 { font-family:var(--head); letter-spacing:-.01em; }
   a { color:var(--accent); }
   header { display:flex; align-items:center; flex-wrap:wrap; gap:6px 18px; min-height:52px;
-    padding:calc(8px + env(safe-area-inset-top, 0px)) 16px 8px; border-bottom:1px solid var(--line); }
-  header .brand { font-size:1.15rem; font-weight:700; letter-spacing:.02em; }
-  header .brand a { color:var(--ink); text-decoration:none; }
+    padding:calc(8px + env(safe-area-inset-top, 0px)) 16px 8px; border-bottom:1px solid var(--line); background:var(--panel); }
+  header .brand { display:flex; align-items:center; gap:10px; font:700 1.2rem/1 var(--head); letter-spacing:-.01em; }
+  header .brand a { display:flex; align-items:center; gap:8px; color:var(--ink); text-decoration:none; }
+  header .brand svg { width:30px; height:30px; flex:none; display:block; }
+  .beta { display:inline-block; padding:4px 7px 3px; clip-path:var(--chamfer); background:var(--ink); color:var(--panel); font:700 10.5px/1 var(--head); letter-spacing:.1em; text-transform:uppercase; }
   header nav { display:flex; flex-wrap:wrap; gap:6px 18px; font-size:15px; }
-  header nav a { color:var(--ink); text-decoration:none; }
-  header nav a:hover { text-decoration:underline; text-underline-offset:5px; }
-  header nav.apps { padding:2px; border:1px solid var(--line); border-radius:8px; gap:2px; }
-  header nav.apps a { padding:3px 10px; border-radius:6px; font-weight:600; font-size:14px; }
-  header nav.apps a.cur { background:var(--ink); color:var(--bg); }
-  header nav.apps a:hover { text-decoration:none; }
-  header nav.apps a:not(.cur):hover { background:var(--card); }
+  header nav a { color:var(--muted); text-decoration:none; }
+  header nav a:hover { color:var(--ink); text-decoration:underline; text-underline-offset:5px; }
   main { max-width:1000px; margin:0 auto; padding:24px 16px 64px; }
   main h1 { font-size:clamp(1.6rem, 6vw, 2.2rem); margin:0 0 .25rem; }
   .lede { font-size:1.1rem; color:var(--muted); margin:.25rem 0 1rem; }
@@ -176,7 +172,7 @@ _PAGE = """<!doctype html>
   .kitlist a { display:grid; grid-template-columns:28px 64px 1fr; gap:12px; align-items:center; padding:10px; border:1px solid var(--line);
     border-radius:10px; color:var(--ink); text-decoration:none; background:var(--bg); transition:border-color .15s; }
   .kitlist a:hover { border-color:var(--accent); }
-  .kitlist .num { display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:var(--ink); color:var(--bg); font-weight:700; font-size:.9rem; }
+  .kitlist .num { display:grid; place-items:center; width:28px; height:28px; clip-path:var(--chamfer); background:var(--ink); color:var(--panel); font:700 .9rem/1 var(--head); }
   .kitlist .pic { width:64px; height:64px; } .kitlist .pic svg { width:40px; height:40px; }
   .kitnote { color:var(--muted); font-size:.9rem; }
   footer { border-top:1px solid var(--line); color:var(--muted); font-size:.9rem; padding:20px 16px 32px; text-align:center; }
@@ -186,7 +182,7 @@ _PAGE = """<!doctype html>
 <script>try { const t = localStorage.getItem('theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch {}</script>
 </head>
 <body>
-<header><div class="brand"><a href="./">Trebuchet Builder</a></div><nav class="apps" aria-label="Builders">{{APPS}}</nav><nav><a href="./">← Back to the designer</a><a href="https://quiverdesignworks.net">Quiver Design Works</a></nav></header>
+<header><div class="brand"><a href="./"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><defs><mask id="tb-hdr-cut" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><rect x="11" y="37" width="13" height="12" rx="1.5" fill="#000" stroke="#000" stroke-width="5" stroke-linejoin="round"/><circle cx="55" cy="16" r="4.5" fill="#000" stroke="#000" stroke-width="3.4"/><circle cx="36" cy="22" r="2.1" fill="#000"/></mask></defs><g mask="url(#tb-hdr-cut)" fill="currentColor" stroke="currentColor"><path d="M25 55L36 20L47 55" fill="none" stroke-width="6" stroke-linejoin="round"/><rect x="6" y="53" width="52" height="5" stroke="none"/><path d="M19 39L53 5" stroke-width="5.5"/><path d="M52 6L55 16" fill="none" stroke-width="1.6"/></g><rect x="11" y="37" width="13" height="12" rx="1.5" fill="#F2652B"/><circle cx="55" cy="16" r="4.5" fill="#F2652B"/></svg>Trebuchet Builder</a><span class="beta" title="Trebuchet Builder is in beta: designs and numbers may change">Beta</span></div><nav><a href="./">← Back to the designer</a><a href="{{ROCKET}}">Rocket Builder</a><a href="https://quiverdesignworks.net">Quiver Design Works</a></nav></header>
 <main>
   <h1>Order trebuchet supplies</h1>
   <p class="lede">Everything you need to build and throw a trebuchet from Trebuchet Builder, apart from the printed parts: bearings, bolts and screws, sling cord, counterweight fill, things to throw, filament and safety glasses. Items marked <b>Start here</b> are what I'd buy first.</p>
