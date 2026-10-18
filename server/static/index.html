@@ -3,52 +3,83 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#111113" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FFFDF8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12203A" media="(prefers-color-scheme: dark)">
 <meta name="format-detection" content="telephone=no">
-<link rel="icon" href="data:,">
-<title>Trebuchet Builder · Quiver Design Works</title>
+<title>Trebuchet Builder (beta) · Quiver Design Works</title>
 <!-- Every URL on this page is relative: the app runs at / on its own and at /trebuchet/ inside the Rocket Builder app. -->
+<link rel="icon" href="static/brand/tb-favicon.svg" type="image/svg+xml">
+<link rel="icon" href="static/brand/tb-favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="static/brand/tb-apple-touch-icon-180.png">
+<link rel="preload" href="static/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="static/fonts/space-grotesk.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  /* Same palette and layout as Rocket Builder (fevergeon.com / quiverdesignworks.net shared look). */
+  /* Self-hosted (OFL, static/fonts/LICENSE-*.txt), copied from Rocket Builder. Relative URLs resolve against the page. */
+  @font-face { font-family:"Inter"; src:url(static/fonts/inter.woff2) format("woff2"); font-weight:100 900; font-style:normal; font-display:swap; }
+  @font-face { font-family:"Space Grotesk"; src:url(static/fonts/space-grotesk.woff2) format("woff2"); font-weight:300 700; font-style:normal; font-display:swap; }
+</style>
+<style>
+  /* Brand: same as Rocket Builder (rocket-builder-web docs/brand/brand.md, tokens.css).
+     Night #12203A, Paper #F6F1E7, Launch orange #F2652B (the one main action: Build), Sky #3D8BFD,
+     Signal red #E5484D, Go green #2FB67C, Grey #6E6E73. Follows the system light/dark setting; the header button pins one. */
   :root {
+    --rb-night:#12203A; --rb-paper:#F6F1E7; --rb-orange:#F2652B; --rb-sky:#3D8BFD; --rb-red:#E5484D; --rb-green:#2FB67C; --rb-grey:#6E6E73;
+    --rb-night-950:#0B1526; --rb-night-800:#1B2C4B; --rb-night-700:#263A5E; --rb-night-300:#A9B4C8;
+    --rb-paper-white:#FFFDF8; --rb-paper-200:#EDE6D8; --rb-paper-300:#E2D9C6;
+    --rb-sky-700:#1D5BC4; --rb-sky-300:#8BBBFE; --rb-red-700:#C22E33; --rb-amber-300:#F0B44C;
+    --font-head:"Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-body:"Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --chamfer:polygon(5px 0, calc(100% - 5px) 0, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0 calc(100% - 5px), 0 5px);
+    --chamfer-s:polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px);
+    --grid-paper:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M8.5 0V40M16.5 0V40M24.5 0V40M32.5 0V40M0 8.5H40M0 16.5H40M0 24.5H40M0 32.5H40' stroke='%233D8BFD' stroke-opacity='.08'/%3E%3Cpath d='M.5 0V40M0 .5H40' stroke='%233D8BFD' stroke-opacity='.2'/%3E%3C/svg%3E");
+    --grid-night:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M8.5 0V40M16.5 0V40M24.5 0V40M32.5 0V40M0 8.5H40M0 16.5H40M0 24.5H40M0 32.5H40' stroke='%23F6F1E7' stroke-opacity='.035'/%3E%3Cpath d='M.5 0V40M0 .5H40' stroke='%23F6F1E7' stroke-opacity='.09'/%3E%3C/svg%3E");
     color-scheme: light;
-    --bg:#fff; --panel:#fff; --card:#f5f5f7; --ink:#1d1d1f; --muted:#6e6e73; --line:#e5e5ea; --rowline:#efeff2;
-    --field:#fff; --accent:#0a58ca; --accent-ink:#fff; --err:#d70015; --errbg:#fff2f3; --errline:#f5c2c7;
-    --view-top:#f5f5f7; --view-bot:#e9e9ee; --chip:rgba(255,255,255,.88); --ok:#1a7f37; --warn:#9a6700;
+    --bg:#FBF8F2; --panel:#FFFDF8; --card:#F6F1E7; --ink:#12203A; --muted:#6E6E73; --line:#E8E0CF; --rowline:#F0EADD;
+    --field:#FFFDF8; --accent:#1D5BC4; --accent-ink:#fff; --err:#C22E33; --errbg:#FCE3E3; --errline:#F19A9C;
+    --view-top:#F6F1E7; --view-bot:#EDE6D8; --chip:rgba(255,253,248,.9); --ok:#17754E; --okbg:#DCF3E8; --warn:#8A5A00; --warnbg:#FBEFD6;
+    --cta:var(--rb-orange); --cta-ink:var(--rb-night); --grid:var(--grid-paper);
+    --hover:rgba(18,32,58,.06); --shadow:0 12px 32px rgba(18,32,58,.16);
     --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
     --safe-l:env(safe-area-inset-left,0px); --safe-r:env(safe-area-inset-right,0px);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme=light]) {
       color-scheme: dark;
-      --bg:#111113; --panel:#111113; --card:#1c1c1f; --ink:#f2f2f4; --muted:#a1a1a6; --line:#2c2c30; --rowline:#222226;
-      --field:#1c1c1f; --accent:#6ea8fe; --accent-ink:#111113; --err:#ff8a80; --errbg:#2e1416; --errline:#5c2a2c;
-      --view-top:#1c1c1f; --view-bot:#0b0b0d; --chip:rgba(28,28,31,.88); --ok:#56d364; --warn:#e3b341;
+      --bg:#0B1526; --panel:#12203A; --card:#1B2C4B; --ink:#F6F1E7; --muted:#A9B4C8; --line:#263A5E; --rowline:#1B2C4B;
+      --field:#1B2C4B; --accent:#8BBBFE; --accent-ink:#12203A; --err:#F19A9C; --errbg:#3B1A22; --errline:#6B2C33;
+      --view-top:#1B2C4B; --view-bot:#0B1526; --chip:rgba(18,32,58,.9); --ok:#85D7B2; --okbg:#10372B; --warn:#F0B44C; --warnbg:#3A2C0E;
+      --grid:var(--grid-night); --hover:rgba(246,241,231,.07); --shadow:0 14px 36px rgba(0,0,0,.45);
     }
   }
   :root[data-theme=dark] {
     color-scheme: dark;
-    --bg:#111113; --panel:#111113; --card:#1c1c1f; --ink:#f2f2f4; --muted:#a1a1a6; --line:#2c2c30; --rowline:#222226;
-    --field:#1c1c1f; --accent:#6ea8fe; --accent-ink:#111113; --err:#ff8a80; --errbg:#2e1416; --errline:#5c2a2c;
-    --view-top:#1c1c1f; --view-bot:#0b0b0d; --chip:rgba(28,28,31,.88); --ok:#56d364; --warn:#e3b341;
+    --bg:#0B1526; --panel:#12203A; --card:#1B2C4B; --ink:#F6F1E7; --muted:#A9B4C8; --line:#263A5E; --rowline:#1B2C4B;
+    --field:#1B2C4B; --accent:#8BBBFE; --accent-ink:#12203A; --err:#F19A9C; --errbg:#3B1A22; --errline:#6B2C33;
+    --view-top:#1B2C4B; --view-bot:#0B1526; --chip:rgba(18,32,58,.9); --ok:#85D7B2; --okbg:#10372B; --warn:#F0B44C; --warnbg:#3A2C0E;
+    --grid:var(--grid-night); --hover:rgba(246,241,231,.07); --shadow:0 14px 36px rgba(0,0,0,.45);
   }
   * { box-sizing:border-box; }
   html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
-  body { margin:0; font:14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg);
+  body { margin:0; font:14px/1.45 var(--font-body); color:var(--ink); background:var(--bg);
     -webkit-tap-highlight-color:transparent; display:flex; flex-direction:column; height:100vh; height:100dvh; }
   a { color:var(--accent); }
+  h2, h3, h4 { font-family:var(--font-head); letter-spacing:-.005em; }
   header { flex:none; display:flex; align-items:center; flex-wrap:wrap; gap:6px 18px; min-height:52px;
     padding:calc(8px + var(--safe-t)) calc(16px + var(--safe-r)) 8px calc(16px + var(--safe-l));
     border-bottom:1px solid var(--line); background:var(--panel); }
-  header h1 { font-size:1.15rem; font-weight:700; letter-spacing:.02em; margin:0; }
-  header nav { display:flex; gap:18px; align-items:center; font-size:14px; }
-  header nav a { color:var(--ink); text-decoration:none; }
-  header nav a:hover { text-decoration:underline; text-underline-offset:5px; }
+  header h1 { margin:0; display:flex; align-items:center; gap:10px; font:700 1.2rem/1 var(--font-head); letter-spacing:-.01em; }
+  header h1 a { display:flex; align-items:center; gap:8px; color:var(--ink); text-decoration:none; }
+  header h1 svg { width:30px; height:30px; flex:none; display:block; }
+  /* Beta tag: a small chamfered tag, like the step numbers. */
+  .beta { display:inline-block; padding:4px 7px 3px; clip-path:var(--chamfer-s); background:var(--ink); color:var(--panel);
+    font:700 10.5px/1 var(--font-head); letter-spacing:.1em; text-transform:uppercase; cursor:help; }
+  header nav { display:flex; gap:18px; align-items:center; font-size:13.5px; }
+  header nav a { color:var(--muted); text-decoration:none; }
+  header nav a:hover { color:var(--ink); text-decoration:underline; text-underline-offset:5px; }
   header .units { color:var(--muted); font-size:12px; margin-left:auto; }
-  #theme { flex:none; padding:5px 12px; font:500 12px system-ui, -apple-system, sans-serif; color:var(--muted);
-    background:transparent; border:1px solid var(--line); border-radius:6px; cursor:pointer; }
-  #theme:hover { color:var(--ink); border-color:var(--muted); }
+  #theme { flex:none; padding:5px 12px; font:500 12px var(--font-body); color:var(--muted);
+    background:transparent; border:0; border-radius:8px; cursor:pointer; }
+  #theme:hover { color:var(--ink); background:var(--hover); }
   main { flex:1 1 auto; min-height:0; display:grid; grid-template-columns:var(--formw, 340px) 0 minmax(0,1fr); }
   /* Drag handles (as in Rocket Builder): between the form and the 3D view, and between the view and the report. */
   #splitter { position:relative; z-index:5; width:0; cursor:col-resize; touch-action:none; }
@@ -68,54 +99,58 @@
   #vsplit:has(+ #report:empty) { display:none; }
   #right.sized #report { height:var(--reporth); max-height:none !important; }
   body.vdragging, body.vdragging * { cursor:row-resize !important; user-select:none !important; }
-  /* Switch between the two builders */
-  header nav.apps { padding:2px; border:1px solid var(--line); border-radius:8px; gap:2px; }
-  header nav.apps a { padding:3px 10px; border-radius:6px; font-weight:600; font-size:13px; }
-  header nav.apps a.cur { background:var(--ink); color:var(--bg); }
-  header nav.apps a:hover { text-decoration:none; }
-  header nav.apps a:not(.cur):hover { background:var(--card); }
-  /* Big order buttons (as in Rocket Builder's report) */
+  /* The two calls to action after a build (as in Rocket Builder's report): flat brand colours, orange stays for Build. */
   .orderrow { grid-column:1/-1; display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px; }
-  .orderrow a { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:10px; text-decoration:none; font-weight:700; font-size:15px; }
-  .orderrow a small { display:block; font-weight:500; font-size:12.5px; opacity:.85; }
+  .orderrow a { display:flex; align-items:center; gap:12px; padding:14px 18px; border-radius:10px; text-decoration:none;
+    font:700 16px var(--font-head); transition:transform .12s, filter .12s; }
+  .orderrow a small { display:block; margin-top:2px; font:500 12.5px var(--font-body); opacity:.8; }
   .orderrow svg { flex:none; width:30px; height:30px; }
-  .orderrow .supplies { background:#f5a524; color:#1d1d1f; }
-  .orderrow .throwpage { background:var(--accent); color:var(--accent-ink); }
-  .orderrow a:hover { filter:brightness(1.06); }
+  .orderrow .supplies { background:var(--card); color:var(--ink); box-shadow:inset 0 0 0 1px var(--line); }
+  .orderrow .throwpage { background:var(--ink); color:var(--panel); }
+  .orderrow a:hover { filter:brightness(1.08); transform:translateY(-1px); }
   .buy { white-space:nowrap; font-size:12px; font-weight:600; }
-  #form { overflow-y:auto; -webkit-overflow-scrolling:touch; padding:8px 14px 16px calc(14px + var(--safe-l)); background:var(--panel); border-right:1px solid var(--line); }
+  /* "In beta" note at the top of the form */
+  .betanote { margin:8px 0 2px; padding:7px 10px; border-radius:0 8px 8px 0; border-left:3px solid var(--rb-sky); background:var(--card);
+    font-size:12.5px; line-height:1.4; color:var(--muted); }
+  .betanote b { color:var(--ink); font-weight:600; }
+  #form { overflow-y:auto; -webkit-overflow-scrolling:touch; padding:8px 16px 16px calc(16px + var(--safe-l)); background:var(--panel); border-right:1px solid var(--line); }
   fieldset { border:none; border-top:1px solid var(--line); margin:10px 0 0; padding:8px 0 0; min-width:0; }
-  legend { font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); padding:0 6px 0 0; }
+  legend { font:600 11.5px/1.6 var(--font-head); text-transform:uppercase; letter-spacing:.08em; color:var(--muted); padding:0 6px 0 0; }
   label { display:grid; grid-template-columns:1fr 120px; align-items:center; gap:8px; margin:6px 0; }
   label.check { grid-template-columns:1fr auto; }
-  input[type=number], select { width:100%; padding:5px 7px; border:1px solid var(--line); border-radius:6px; font:inherit; color:var(--ink); background:var(--field); }
+  input[type=number], select { width:100%; padding:5px 7px; border:1px solid var(--line); border-radius:7px; font:inherit; font-variant-numeric:tabular-nums; color:var(--ink); background:var(--field); }
+  input[type=number]:hover, select:hover { border-color:color-mix(in srgb, var(--ink) 30%, var(--line)); }
   input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
   input:disabled { opacity:.5; }
   input[type=checkbox] { accent-color:var(--accent); width:16px; height:16px; margin:0; }
   .hint { color:var(--muted); font-size:11.5px; margin:-2px 0 4px; }
   .actions { position:sticky; bottom:-16px; background:var(--panel); padding:10px 0 6px; display:flex; flex-wrap:wrap; gap:8px; border-top:1px solid var(--line); margin-top:12px; }
-  button, a.btn { flex:1; padding:9px 12px; border-radius:6px; border:1px solid transparent; font:600 14px system-ui, -apple-system, sans-serif; cursor:pointer; text-align:center; text-decoration:none; }
-  #build { background:var(--ink); color:var(--bg); }
-  #build:hover { opacity:.88; }
+  button, a.btn { flex:1; padding:9px 12px; border-radius:8px; border:1px solid transparent; font:600 14px var(--font-body); cursor:pointer; text-align:center; text-decoration:none; }
+  /* The one main action on the page: Launch orange with Night text (white on orange fails contrast). */
+  #build { background:var(--cta); color:var(--cta-ink); box-shadow:inset 0 -3px 0 rgba(18,32,58,.18); }
+  #build:hover { filter:brightness(1.05); }
   #build:disabled { opacity:.5; cursor:wait; }
-  #build.attention { box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent); }
+  #build.attention { box-shadow:inset 0 -3px 0 rgba(18,32,58,.18), 0 0 0 3px color-mix(in srgb, var(--cta) 40%, transparent); }
   a.btn { color:var(--ink); background:transparent; border-color:var(--line); }
-  a.btn:hover { border-color:var(--accent); color:var(--accent); }
+  a.btn:hover { background:var(--hover); }
   a.btn.off { pointer-events:none; opacity:.4; }
   #live { flex:1 1 100%; margin:0; font-size:13px; color:var(--muted); }
-  #live b { color:var(--ink); font-size:15px; }
+  #live b { color:var(--ink); font:700 15px var(--font-head); font-variant-numeric:tabular-nums; }
   #live.bad b { color:var(--err); }
-  #dirty { flex:1 1 100%; margin:0; font-size:12px; color:var(--warn); }
-  #modebar { display:flex; margin:6px 0 2px; border:1px solid var(--line); border-radius:6px; overflow:hidden; }
-  #modebar button { flex:1; padding:5px 8px; border:0; border-radius:0; font:600 12px system-ui; color:var(--muted); background:transparent; }
-  #modebar button[aria-pressed=true] { color:var(--accent-ink); background:var(--accent); }
+  #dirty { flex:1 1 100%; margin:0; font-size:12px; padding:6px 9px; border-radius:8px; color:var(--warn); background:var(--warnbg); }
+  #dirty[hidden] { display:none; }
+  #modebar { display:flex; gap:2px; margin:6px 0 2px; padding:3px; border-radius:10px; background:var(--card); }
+  #modebar button { flex:1; padding:5px 8px; border:0; border-radius:7px; font:600 12.5px var(--font-body); color:var(--muted); background:transparent; }
+  #modebar button:hover { color:var(--ink); }
+  #modebar button[aria-pressed=true] { color:var(--panel); background:var(--ink); }
   #modehint { font-size:11px; color:var(--muted); margin:4px 0 0; }
   body.beginner .adv { display:none !important; }
 
-  /* Numbered steps, as in Rocket Builder's Beginner mode */
-  .step { display:flex; align-items:center; gap:10px; margin:16px 0 4px; font-size:16px; font-weight:700; }
-  .step .n { flex:none; display:grid; place-items:center; width:26px; height:26px; border-radius:50%;
-    background:var(--ink); color:var(--bg); font-size:13px; font-weight:700; }
+  /* Numbered steps, as in Rocket Builder's Beginner mode: chamfered tags, like the cut corners of the Quiver lettering. */
+  body.beginner #form { font-size:15px; }
+  .step { display:flex; align-items:center; gap:10px; margin:18px 0 4px; font:700 16.5px/1.25 var(--font-head); letter-spacing:-.005em; }
+  .step .n { flex:none; display:grid; place-items:center; width:28px; height:28px; clip-path:var(--chamfer);
+    background:var(--ink); color:var(--panel); font:700 14px/1 var(--font-head); }
   .why { margin:2px 0 8px; font-size:13.5px; line-height:1.45; color:var(--muted); }
   .why b { color:var(--ink); font-weight:600; }
   .more { font-size:13px; color:var(--accent); white-space:nowrap; }
@@ -123,81 +158,95 @@
   .conv b { color:var(--ink); }
   .row { display:flex; gap:8px; align-items:center; }
   .row input[type=number] { width:96px; flex:none; }
-  input[type=range].slider { flex:1; width:100%; margin:4px 0 2px; accent-color:var(--accent); }
+  input[type=range].slider { flex:1; width:100%; margin:4px 0 2px; accent-color:var(--ink); }
   .choices { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; margin:6px 0 4px; }
   .choices button { display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 4px 6px;
-    border:1.5px solid var(--line); border-radius:8px; background:var(--field); color:var(--ink); font:600 12px system-ui, -apple-system, sans-serif; cursor:pointer; }
-  .choices button:hover { border-color:var(--muted); }
-  .choices button[aria-pressed=true] { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent); }
+    border:1.5px solid var(--line); border-radius:10px; background:var(--field); color:var(--ink); font:600 12.5px var(--font-body); cursor:pointer; }
+  .choices button:hover { border-color:color-mix(in srgb, var(--ink) 35%, var(--line)); }
+  .choices button[aria-pressed=true] { border-color:var(--ink); background:var(--card); box-shadow:inset 0 0 0 1px var(--ink); }
   .choices svg { width:46px; height:46px; display:block; color:var(--ink); }
   .choices small { color:var(--muted); font-weight:500; }
 
   #right { display:grid; grid-template-rows:minmax(0,1fr) 0 auto; min-width:0; min-height:0; }
-  #view { position:relative; min-height:0; min-width:0; overflow:hidden; background:linear-gradient(var(--view-top),var(--view-bot));
+  /* A faint blueprint grid behind the model (the canvas is transparent). */
+  #view { position:relative; min-height:0; min-width:0; overflow:hidden; background:var(--grid) -1px -1px, linear-gradient(var(--view-top),var(--view-bot));
     -webkit-user-select:none; user-select:none; }
   #view canvas { position:absolute; inset:0; width:100% !important; height:100% !important; display:block; touch-action:none; }
-  #status { position:absolute; z-index:1; left:12px; top:10px; max-width:calc(100% - 300px); padding:4px 8px; background:var(--chip);
-    border:1px solid var(--line); border-radius:6px; font-size:12px; color:var(--muted); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
-  #viewopts { position:absolute; z-index:1; right:12px; top:10px; display:flex; gap:10px; align-items:center; background:var(--chip); border:1px solid var(--line);
-    padding:4px 10px; border-radius:6px; font-size:12px; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
-  #viewopts label { display:flex; margin:0; gap:5px; align-items:center; }
-  #viewopts button { flex:none; padding:2px 8px; font:500 12px system-ui; border:1px solid var(--line); border-radius:4px; color:var(--ink); background:transparent; }
-  #viewopts button.go { background:var(--ink); color:var(--bg); border-color:var(--ink); font-weight:600; }
-  #viewopts button:disabled { opacity:.4; }
-  #progress { position:absolute; z-index:2; left:0; right:0; top:0; height:3px; }
-  #progress > div { height:100%; width:0; background:var(--accent); transition:width .2s; }
-  #report { padding:10px 16px calc(10px + var(--safe-b)) 16px; background:var(--panel); border-top:1px solid var(--line);
-    max-height:42vh; max-height:42dvh; overflow-y:auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:12px; }
+  #status { position:absolute; z-index:1; left:12px; top:10px; max-width:calc(100% - 300px); padding:4px 9px; background:var(--chip);
+    border-radius:8px; font-size:12px; color:var(--muted); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+  /* View options: one compact segmented group, as in Rocket Builder. */
+  #viewopts { position:absolute; z-index:3; right:12px; top:10px; display:flex; gap:2px; align-items:center; background:var(--chip);
+    padding:3px; border-radius:10px; font-size:12px; box-shadow:0 1px 3px rgba(18,32,58,.12); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+  #viewopts label, #viewopts button { position:relative; display:flex; align-items:center; gap:5px; margin:0; padding:4px 10px; min-height:26px;
+    border:0; border-radius:7px; font:600 12px var(--font-body); color:var(--muted); background:transparent; cursor:pointer; flex:none; }
+  #viewopts label:hover, #viewopts button:hover { color:var(--ink); background:var(--hover); }
+  #viewopts input[type=checkbox] { position:absolute; opacity:0; width:1px; height:1px; margin:0; pointer-events:none; }
+  #viewopts label:has(input:checked) { color:var(--panel); background:var(--ink); }
+  #viewopts label:has(input:focus-visible) { outline:2px solid var(--accent); outline-offset:1px; }
+  #viewopts button.go { color:var(--panel); background:var(--ink); margin-right:4px; }
+  #viewopts button:disabled { opacity:.4; cursor:default; }
+  #progress { position:absolute; z-index:2; left:0; right:0; top:0; height:4px; }
+  #progress[hidden] { display:none; }
+  #progress > div { height:100%; width:0; background:var(--cta); transition:width .2s; }
+  #report { padding:12px 18px calc(12px + var(--safe-b)) 18px; padding-right:calc(18px + var(--safe-r)); background:var(--panel); border-top:1px solid var(--line);
+    max-height:42vh; max-height:42dvh; overflow-y:auto; -webkit-overflow-scrolling:touch; display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:12px; }
   #report:empty { display:none; }
-  .card { border:1px solid var(--line); border-radius:10px; padding:12px 14px; background:var(--card); min-width:0; }
-  .card h3 { margin:0 0 6px; font-size:15px; }
+  .card { border:0; border-radius:14px; padding:14px 16px; background:var(--card); min-width:0; }
+  .card h3 { margin:0 0 6px; font-size:16px; }
   .card p { margin:4px 0; font-size:13.5px; line-height:1.45; }
   .card.wide { grid-column:1/-1; }
-  .card.bad { border-color:var(--errline); background:var(--errbg); }
+  .card.bad { box-shadow:inset 4px 0 0 var(--rb-red); background:var(--errbg); }
   .big { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
-  .big b { font-size:28px; font-variant-numeric:tabular-nums; color:var(--ok); }
+  .big b { font:700 30px/1.1 var(--font-head); font-variant-numeric:tabular-nums; color:var(--ok); }
   .big span { color:var(--muted); }
   table { border-collapse:collapse; width:100%; font-size:12.5px; }
   td, th { padding:3px 6px 3px 0; text-align:left; border-bottom:1px solid var(--rowline); vertical-align:top; }
+  .card td, .card th { border-bottom-color:var(--line); }
   th { color:var(--muted); font-weight:600; }
   td.n, th.n { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  td.n { font-family:var(--font-head); }
   .sw { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; vertical-align:-1px; }
   ol, ul { margin:4px 0; padding-left:20px; font-size:13.5px; line-height:1.45; }
   li { margin:3px 0; }
   .advice li b { font-variant-numeric:tabular-nums; }
-  .advice button { flex:none; padding:1px 8px; margin-left:6px; font:600 12px system-ui; border:1px solid var(--accent); color:var(--accent); background:transparent; border-radius:9px; }
-  .error { grid-column:1/-1; color:var(--err); background:var(--errbg); border:1px solid var(--errline); padding:8px 10px; border-radius:6px; }
+  .advice button { flex:none; padding:1px 8px; margin-left:6px; font:600 12px var(--font-body); border:1px solid var(--accent); color:var(--accent); background:transparent; border-radius:9px; }
+  .advice button:hover { background:var(--accent); color:var(--accent-ink); }
+  .error { grid-column:1/-1; color:var(--err); background:var(--errbg); border:1px solid var(--errline); padding:8px 10px; border-radius:8px; }
   .chart { width:100%; height:auto; display:block; margin:6px 0 2px; color:var(--ink); }
-  .chart text { fill:var(--muted); font:11px system-ui, sans-serif; }
+  .chart text { fill:var(--muted); font:11px var(--font-head); font-variant-numeric:tabular-nums; }
   .chart .lbl { fill:var(--ink); font-weight:600; }
   .muted { color:var(--muted); }
   .note { font-size:12px; color:var(--muted); }
 
-  #guide { position:absolute; inset:44px 12px 12px; overflow-y:auto; padding:14px 18px; border:1px solid var(--line); border-radius:8px; background:var(--panel); font-size:13.5px; line-height:1.5; z-index:1; }
+  #guide { position:absolute; inset:50px 12px 12px; overflow-y:auto; padding:16px 22px; border:0; border-radius:16px; background:var(--panel); box-shadow:var(--shadow); font-size:13.5px; line-height:1.5; z-index:2; }
   #guide[hidden] { display:none; }
-  #guide h2 { font-size:18px; margin:0 0 4px; } #guide h3 { font-size:14px; margin:14px 0 4px; }
+  #guide h2 { font-size:22px; letter-spacing:-.02em; margin:0 0 4px; } #guide h3 { font-size:15px; margin:16px 0 4px; }
   #guide p { margin:4px 0; } #guide .cols { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:0 24px; }
   #guide dl { margin:4px 0; } #guide dt { font-weight:600; margin-top:6px; } #guide dd { margin:0 0 0 14px; color:var(--muted); }
   #guide svg { width:100%; max-width:560px; height:auto; display:block; color:var(--ink); }
   #guide .gnav { display:flex; flex-wrap:wrap; gap:4px 12px; font-size:12px; margin:2px 0 8px; }
-  #guide .gsupport { padding:6px 10px; border-left:3px solid #f5a524; background:var(--card); border-radius:4px; }
+  #guide .gsupport { padding:10px 12px; border-left:4px solid var(--rb-sky); background:var(--card); border-radius:0 10px 10px 0; }
   #guide figure { margin:6px 0 10px; } #guide figcaption { font-size:11.5px; color:var(--muted); }
   #guide h3 { scroll-margin-top:8px; }
   #guide .cols2 { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:0 24px; }
   #guide .gtable { font-size:13px; margin:4px 0 8px; } #guide .gtable td:first-child { width:38%; }
   #guide .eg { font-family:ui-monospace, monospace; background:var(--chip); padding:0 4px; border-radius:3px; }
   .steps4 { display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:8px; margin:8px 0 4px; padding:0; list-style:none; counter-reset:s; }
-  .steps4 li { counter-increment:s; border:1px solid var(--line); border-radius:8px; padding:8px 10px; font-size:13px; background:var(--card); margin:0; }
-  .steps4 li::before { content:counter(s); display:inline-grid; place-items:center; width:20px; height:20px; margin-right:6px; border-radius:50%; background:var(--ink); color:var(--bg); font-size:11px; font-weight:700; }
-  #guide .close { float:right; flex:none; padding:3px 10px; font:500 12px system-ui; border:1px solid var(--line); color:var(--ink); background:transparent; }
+  .steps4 li { counter-increment:s; border:0; border-radius:12px; padding:10px 12px; font-size:13px; background:var(--card); margin:0; }
+  .steps4 li::before { content:counter(s); display:inline-grid; place-items:center; width:22px; height:22px; margin-right:7px; clip-path:var(--chamfer); background:var(--ink); color:var(--panel); font:700 12px/1 var(--font-head); vertical-align:1px; }
+  #guide .close { float:right; flex:none; padding:4px 12px; font:500 13px var(--font-body); border:0; color:var(--muted); background:transparent; }
+  #guide .close:hover { color:var(--ink); background:var(--hover); }
 
+  @media (max-width:1100px) and (min-width:801px) {
+    main { grid-template-columns:var(--formw, 320px) 0 minmax(0,1fr); }
+  }
   @media (max-width:800px) {
     body { height:auto; min-height:100dvh; }
     main { display:flex; flex-direction:column; }
     #right { display:contents; }
     #view { order:1; height:52vh; height:52svh; min-height:280px; max-height:620px; flex:none; border-bottom:1px solid var(--line); }
     #report { order:2; grid-template-columns:1fr; max-height:none; overflow:visible; }
-    #form { order:3; overflow:visible; border-right:none; padding-left:calc(14px + var(--safe-l)); padding-right:calc(14px + var(--safe-r)); }
+    #form { order:3; overflow:visible; border-right:none; padding-left:calc(16px + var(--safe-l)); padding-right:calc(16px + var(--safe-r)); }
     .actions { bottom:0; padding-bottom:calc(8px + var(--safe-b)); z-index:2; }
     #status { max-width:calc(100% - 24px); top:auto; bottom:10px; }
     header nav .long { display:none; }
@@ -205,12 +254,20 @@
     #right.sized #report { height:auto; }
     #guide { position:fixed; z-index:50; inset:calc(8px + var(--safe-t)) 8px calc(8px + var(--safe-b)) 8px; box-shadow:0 10px 40px rgba(0,0,0,.45); }
     #guide .close { position:sticky; top:0; min-height:36px; }
+    .buy { white-space:normal; }  /* the shopping list's "Find on Amazon" column pushed the page sideways on phones */
+  }
+  @media (max-width:480px) {
+    header { gap:6px 12px; }
+    header .units { display:none; }
+    header nav { gap:14px; }
+    #theme { padding:5px 9px; margin-left:auto; }
   }
   @media (pointer:coarse) {
     body { font-size:15px; }
     input[type=number], select { font-size:16px; padding:8px 9px; min-height:40px; }
     button, a.btn { min-height:46px; font-size:15px; }
-    #viewopts button { min-height:30px; font-size:14px; }
+    #theme { min-height:34px; }
+    #viewopts label, #viewopts button { min-height:36px; padding:4px 12px; font-size:13.5px; }
   }
 </style>
 <script>
@@ -224,7 +281,7 @@
 </script>
 </head>
 <body class="beginner">
-<header><h1>Trebuchet Builder</h1><nav class="apps" aria-label="Builders"><a href="https://rocket.quiverdesignworks.net/">Rocket Builder</a><a href="https://trebuchet.quiverdesignworks.net/" class="cur" aria-current="page">Trebuchet Builder</a></nav><nav><a href="https://quiverdesignworks.net/#apps" class="long">← Quiver Design Works</a><a href="supplies" target="_blank" title="Bearings, bolts, string, counterweight fill, projectiles and filament">Order Trebuchet Supplies</a></nav><span class="units">Beta · units mm</span><button id="theme" type="button"></button></header>
+<header><h1><a href="./" title="Trebuchet Builder: start page"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><defs><mask id="tb-hdr-cut" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><rect x="11" y="37" width="13" height="12" rx="1.5" fill="#000" stroke="#000" stroke-width="5" stroke-linejoin="round"/><circle cx="55" cy="16" r="4.5" fill="#000" stroke="#000" stroke-width="3.4"/><circle cx="36" cy="22" r="2.1" fill="#000"/></mask></defs><g mask="url(#tb-hdr-cut)" fill="currentColor" stroke="currentColor"><path d="M25 55L36 20L47 55" fill="none" stroke-width="6" stroke-linejoin="round"/><rect x="6" y="53" width="52" height="5" stroke="none"/><path d="M19 39L53 5" stroke-width="5.5"/><path d="M52 6L55 16" fill="none" stroke-width="1.6"/></g><rect x="11" y="37" width="13" height="12" rx="1.5" fill="#F2652B"/><circle cx="55" cy="16" r="4.5" fill="#F2652B"/></svg>Trebuchet Builder</a><span class="beta" title="Trebuchet Builder is in beta: designs and numbers may change">Beta</span></h1><nav><a href="https://rocket.quiverdesignworks.net/" title="3D-printed model rockets">Rocket Builder</a><a href="https://quiverdesignworks.net/#apps" class="long">← Quiver Design Works</a><a href="supplies" target="_blank" title="Bearings, bolts, string, counterweight fill, projectiles and filament">Order <span class="long">Trebuchet </span>Supplies</a></nav><span class="units">units mm</span><button id="theme" type="button"></button></header>
 <main>
   <form id="form" autocomplete="off">
     <div id="modebar" role="group" aria-label="Mode">
@@ -232,6 +289,7 @@
       <button type="button" data-mode="advanced" aria-pressed="false">Advanced</button>
     </div>
     <div id="modehint"></div>
+    <p class="betanote"><b>Trebuchet Builder is in beta:</b> designs and numbers may change. Real throws haven't calibrated the estimate yet.</p>
 
     <div class="step"><span class="n">1</span>How big?</div>
     <p class="why">The <b>arm</b> is the long stick that throws. A longer arm throws farther but needs a bigger printer.</p>
@@ -302,13 +360,13 @@
         <figure>
           <svg viewBox="0 0 520 200" aria-label="Side view of a trebuchet">
             <line x1="40" y1="180" x2="480" y2="180" stroke="currentColor" stroke-width="2" opacity=".4"/>
-            <path d="M150 180 L250 60 L350 180" fill="none" stroke="#2f6fd6" stroke-width="8" stroke-linejoin="round"/>
-            <line x1="250" y1="60" x2="110" y2="150" stroke="#d24a3a" stroke-width="8" stroke-linecap="round"/>
-            <line x1="250" y1="60" x2="290" y2="34" stroke="#d24a3a" stroke-width="8" stroke-linecap="round"/>
-            <line x1="292" y1="34" x2="292" y2="70" stroke="#8a5cc2" stroke-width="3"/>
-            <rect x="272" y="70" width="40" height="46" fill="#8a5cc2" rx="3"/>
+            <path d="M150 180 L250 60 L350 180" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/>
+            <line x1="250" y1="60" x2="110" y2="150" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+            <line x1="250" y1="60" x2="290" y2="34" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+            <line x1="292" y1="34" x2="292" y2="70" stroke="currentColor" stroke-width="3"/>
+            <rect x="272" y="70" width="40" height="46" fill="#F2652B" rx="3"/>
             <path d="M110 150 Q 170 178 236 172" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3"/>
-            <circle cx="240" cy="170" r="8" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="240" cy="170" r="8" fill="#F2652B" stroke="currentColor" stroke-width="2"/>
             <circle cx="250" cy="60" r="5" fill="currentColor"/>
             <text x="320" y="96" font-size="12" fill="currentColor">counterweight</text>
             <text x="262" y="56" font-size="12" fill="currentColor">axle</text>
@@ -497,7 +555,7 @@ $('auto_release').onchange = () => {
 
 const PROJ_ICON = {
   printed_ball: '<svg viewBox="0 0 46 46"><circle cx="23" cy="25" r="11" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 25h22M23 14v22" stroke="currentColor" stroke-width="1" opacity=".5"/></svg>',
-  marble: '<svg viewBox="0 0 46 46"><circle cx="23" cy="25" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M17 23q6-6 12 4" fill="none" stroke="#2f6fd6" stroke-width="2"/></svg>',
+  marble: '<svg viewBox="0 0 46 46"><circle cx="23" cy="25" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M17 23q6-6 12 4" fill="none" stroke="#3D8BFD" stroke-width="2"/></svg>',
   ping_pong: '<svg viewBox="0 0 46 46"><circle cx="23" cy="24" r="16" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
   foam_ball: '<svg viewBox="0 0 46 46"><circle cx="23" cy="25" r="12" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 2"/></svg>',
   mini_marshmallow: '<svg viewBox="0 0 46 46"><rect x="14" y="17" width="18" height="16" rx="5" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
@@ -644,14 +702,14 @@ function buildRig(meshes, a) {
     else if (role === 'projectile') ballMesh = mesh;
   }
   if (ballMesh) ballMesh.visible = false;  // replaced by a ball that moves
-  const ball = new THREE.Mesh(new THREE.SphereGeometry(a.r_p, 24, 16), new THREE.MeshStandardMaterial({ color: 0xf2f2f2, roughness: 0.5 }));
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(a.r_p, 24, 16), new THREE.MeshStandardMaterial({ color: 0xf2652b, roughness: 0.5 }));
   model.add(ball);
   const sling = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]),
-    new THREE.LineBasicMaterial({ color: 0x8a6a3a }));
+    new THREE.LineBasicMaterial({ color: 0x6e6e73 }));
   model.add(sling);
   const pathPts = (a.path || []).map(([x, z]) => new THREE.Vector3(x * 1000, 0, z * 1000));
   const trail = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pathPts.length ? pathPts : [new THREE.Vector3()]),
-    new THREE.LineDashedMaterial({ color: 0x0a58ca, dashSize: 6, gapSize: 4 }));
+    new THREE.LineDashedMaterial({ color: 0x3d8bfd, dashSize: 6, gapSize: 4 }));
   trail.computeLineDistances(); trail.visible = false; model.add(trail);
   rig = { a, arm, bucket, ball, sling, trail, playing: false, t0: 0 };
   pose(a.frames[0] || [0, a.theta0, a.psi0, 0]);

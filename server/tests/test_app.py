@@ -17,6 +17,21 @@ def test_options_and_page():
     assert 'fetch(\'/api' not in page and '"/static' not in page
 
 
+def test_pages_are_standalone_beta_with_brand_assets():
+    """No Rocket/Trebuchet switcher (each app is its own page, linked from the
+    other); Trebuchet Builder is marked beta; fonts and icons are served from
+    this app's own static folder, by relative URL."""
+    for path in ("/", "/throw", "/supplies"):
+        page = c.get(path).text
+        assert 'class="apps"' not in page, path
+        assert "Beta" in page and "https://rocket.quiverdesignworks.net/" in page, path
+        assert "url(/static" not in page and 'href="/static' not in page, path
+    assert "in beta" in c.get("/").text
+    for f in ("fonts/inter.woff2", "fonts/space-grotesk.woff2", "fonts/LICENSE-inter.txt",
+              "brand/tb-favicon.svg", "brand/tb-favicon-32.png", "brand/tb-apple-touch-icon-180.png"):
+        assert c.get(f"/static/{f}").status_code == 200, f
+
+
 def test_plan():
     r = c.post("/api/plan", json={"cw_mass": 400})
     assert r.status_code == 200
