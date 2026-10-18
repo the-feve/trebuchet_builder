@@ -29,7 +29,7 @@ def test_every_link_carries_the_store_id():
 def test_default_shopping_list_items_have_links():
     """Everything the default design needs to buy has somewhere to buy it."""
     pl = plan(DesignParams())
-    keys = {i["key"] for i in bill_of_materials(pl.params, pl.derived, pl.pin_angle)}
+    keys = {i["key"] for i in bill_of_materials(pl.params, pl.derived, pl.pin_angle) if not i["household"]}
     links = treb_supplies.links_by_key()
     assert keys - set(links) == set(), keys - set(links)
 

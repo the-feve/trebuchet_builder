@@ -13,6 +13,15 @@ Steps for building Trebuchet Builder up from a small printable kit. Tick them of
 - [ ] Wind (head/tail) on the test throw, like Rocket Builder's launch simulator
 - [ ] Print and throw the default design; compare with the estimate and set `physics.REAL_WORLD` from it (record in `docs/`)
 
+### Kit redesign (2026-10-18)
+- [x] Research printed trebuchets and fit numbers (`docs/design_research.md`)
+- [x] One 220 mm plate (packer, 3MF), snap-fit, no hardware; printed sling pouch, ring, release hook, trigger
+- [x] Tests: no assembled parts intersecting, bucket clears the swing, snap strain, one plate
+- [ ] Owner: test print; tune fits from it
+- [ ] Release tuning without reprinting the arm (swappable tip, or spare hooks at 30/40/50°)
+- [ ] Bigger designs on one plate where the bed allows (default from bed size)
+- [ ] Merge after the hosting/page-move work
+
 ## Step 2: Make it a product
 - [x] Hosting: inside the Rocket Builder Fly app (code done 2026-10-15)
 - [x] Owner: `main` branch here, `TREBUCHET_REPO_TOKEN` in rocket-builder-web, merge its PR, `trebuchet.quiverdesignworks.net` DNS + cert (live 2026-10-15)

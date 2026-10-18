@@ -113,7 +113,7 @@
     <label>Arm length <output id="armout"></output><input type="range" id="arm_length" min="120" max="400" step="10"></label>
     <label>Projectile <select id="projectile"></select></label>
     <label class="check"><input type="checkbox" id="autorel" checked> Best release angle</label>
-    <label id="relbox" hidden>Release pin angle <output id="relout"></output><input type="range" id="release_angle" min="10" max="110" step="1"></label>
+    <label id="relbox" hidden>Release hook angle <output id="relout"></output><input type="range" id="release_angle" min="10" max="110" step="1"></label>
     <button id="play">↻ Throw again</button>
   </div>
   <div id="err" class="warn" role="alert"></div>
@@ -354,7 +354,7 @@ function stats() {
   const lane = Math.ceil(t.range_m * 1.2 * 2) / 2, ceiling = t.peak_height_m + 0.75;
   $('room').innerHTML = `
     <li>Clear a lane at least <b>${lane} m</b> (${ft(lane)} ft) long in front of the trebuchet and about 1 m (3 ft) wide: the model's distance plus 20%, since a good throw can beat the estimate.</li>
-    <li>Indoors, the ball climbs to about <b>${ceiling.toFixed(1)} m</b> (${ft(ceiling)} ft) above the floor from a normal table${ceiling > 2.4 ? ': higher than most ceilings, so throw outside or lower the release pin angle' : ''}.</li>
+    <li>Indoors, the ball climbs to about <b>${ceiling.toFixed(1)} m</b> (${ft(ceiling)} ft) above the floor from a normal table${ceiling > 2.4 ? ': higher than most ceilings, so throw outside or use a smaller release angle' : ''}.</li>
     <li>Stand beside or behind it, never in front. Nobody walks into the lane while it's cocked.</li>`;
 }
 

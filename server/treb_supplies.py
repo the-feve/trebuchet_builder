@@ -47,7 +47,7 @@ _FALLBACK = f'<rect {_S} x="12" y="16" width="40" height="34" rx="4"/><path {_S}
 
 @lru_cache(maxsize=1)
 def gear() -> dict:
-    return json.loads(GEAR.read_text())
+    return json.loads(GEAR.read_text(encoding="utf-8"))
 
 
 def _icon(cat_id: str) -> str:

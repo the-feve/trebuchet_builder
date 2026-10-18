@@ -1,8 +1,17 @@
 # Handoff
 
-_Last updated 2026-10-18 (split from Rocket Builder: own pages, beta, Rocket Builder brand). Read this, then `TODO.md`._
+_Last updated 2026-10-18 (kit redesign: one plate, snap-fit, no hardware; merged with the split into its own beta page). Read this, then `TODO.md`._
 
 ## Where things stand
+
+- **Kit redesign (2026-10-18, owner's request, branch `claude/trusting-babbage-seog9z`, not merged yet):** the first kit didn't fit one plate (about 2.2 plates), needed an M8 bolt, 608 bearings, an M4 bolt and ten M3 screws, had no sling parts, and the arm went through the bucket. Research, fit numbers and every decision are in `docs/design_research.md`. Now:
+  - **Fits and hardware:** the default (180 mm arm, 300 g coins) prints on **one 220 mm plate** (`plate_1.3mf` in the ZIP) and **snaps together with no hardware**: only string and coins.
+  - **Parts:** two identical T-frames, two snap cross members, a deck on their pegs, the arm with a printed release hook at the best release angle, printed snap pins (axle Ø10, hinge Ø8) with spacers and sleeves, a roofed bucket with a push-in cap, a trigger pin beside the axle, a sling pouch and release ring, and the ball. The cord notches are under a frame rail.
+  - **Optional hardware:** M8 bolt or M8 + 608 bearings (`axle` option).
+  - **New code and fields:** `trebgen/layout.py` (raster + FFT nesting packer; ~1 s), `Trebuchet.plates`, `export.plate_3mf`/`render_plate_png`, `clearance` field (Advanced), report `plates`.
+  - **Tests:** 30 geometry tests (incl. no assembled parts intersecting across 7 variants, the bucket clearing the deck through the simulated swing, snap catch and strain, one plate, plate parts apart). 13 server tests.
+  - **Page:** guide text updated. The 3D view shows the sling as built: the printed pouch rides with the ball (flat on the deck, then wrapping its far side once the sling lifts it), and two cords run from the arm's tip hole and from the release ring on the hook to the pouch's ends (`anim.sling`, from `parts.sling_anchors`). The cords are also preview parts (`Sling_Cords`, role `cord`, not printed) so the renders show them.
+  - **Still to do:** the owner's test print of the snaps; see the open questions in the docs page. The other session was moving the page/hosting at the same time: merge after that lands (conflicts, if any, are in `server/static/index.html` guide text).
 
 Trebuchet Builder: a web page where someone designs a small 3D-printable desk trebuchet, sees how far it should throw, and downloads STLs plus a hardware list. Built to match Rocket Builder (the-feve/rocket-builder-web).
 
@@ -29,12 +38,16 @@ Rules that follow from sharing the app: keep page URLs relative; don't add serve
 
 ## Next steps (in order)
 
+0. Owner: print the default plate (`plate_1.3mf`) and report how the snaps, pins and cap fit; then tune `RUN_CLEAR`/`SLOT_CLEAR`/barbs in `params.py`/`parts.py` (or the default `clearance`). Then merge this branch (after the hosting/page-move work).
+
 1. Owner: try it on a phone; pick specific products for the supplies list (each `"search"` item → an `"asin"`).
 2. Print the default design and throw it: note distance, what broke or rubbed, and set `physics.REAL_WORLD` from it (record in `docs/`).
 3. Wind on the test throw; saved designs / share links (TODO).
 4. Orders (reuse Rocket Builder's code; mind the module-name rule above).
 
 ## Decisions log
+
+- 2026-10-18: Kit redesigned for one plate and snap-fit (owner). Frames are upside-down Ts so two nest head to toe beside the arm; the trigger moved next to the axle (a lug at the back stopped the frames nesting); the deck shrank to where the ball actually slides; the bucket got a roof and a cap instead of a lid (plate area). Release hook printed into the arm at the best angle (reprint the arm to retune). Coins are the default fill (everyone has them). Fits from published FDM guidance, not yet test-printed.
 
 - 2026-10-15: Separate repo `the-feve/trebuchet_builder` (owner created it; the Claude app can't create repos). Same stack as Rocket Builder: Python + build123d + FastAPI + vendored three.js.
 - 2026-10-15: First machine is a hinged-counterweight trebuchet (hinged throws farther than fixed and is easy to print). Fixed and floating-arm (FAT) variants are later steps.

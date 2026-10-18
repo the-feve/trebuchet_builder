@@ -281,7 +281,7 @@
 </script>
 </head>
 <body class="beginner">
-<header><h1><a href="./" title="Trebuchet Builder: start page"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><defs><mask id="tb-hdr-cut" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><rect x="11" y="37" width="13" height="12" rx="1.5" fill="#000" stroke="#000" stroke-width="5" stroke-linejoin="round"/><circle cx="55" cy="16" r="4.5" fill="#000" stroke="#000" stroke-width="3.4"/><circle cx="36" cy="22" r="2.1" fill="#000"/></mask></defs><g mask="url(#tb-hdr-cut)" fill="currentColor" stroke="currentColor"><path d="M25 55L36 20L47 55" fill="none" stroke-width="6" stroke-linejoin="round"/><rect x="6" y="53" width="52" height="5" stroke="none"/><path d="M19 39L53 5" stroke-width="5.5"/><path d="M52 6L55 16" fill="none" stroke-width="1.6"/></g><rect x="11" y="37" width="13" height="12" rx="1.5" fill="#F2652B"/><circle cx="55" cy="16" r="4.5" fill="#F2652B"/></svg>Trebuchet Builder</a><span class="beta" title="Trebuchet Builder is in beta: designs and numbers may change">Beta</span></h1><nav><a href="https://rocket.quiverdesignworks.net/" title="3D-printed model rockets">Rocket Builder</a><a href="https://quiverdesignworks.net/#apps" class="long">← Quiver Design Works</a><a href="supplies" target="_blank" title="Bearings, bolts, string, counterweight fill, projectiles and filament">Order <span class="long">Trebuchet </span>Supplies</a></nav><span class="units">units mm</span><button id="theme" type="button"></button></header>
+<header><h1><a href="./" title="Trebuchet Builder: start page"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><defs><mask id="tb-hdr-cut" maskUnits="userSpaceOnUse" x="0" y="0" width="64" height="64"><rect width="64" height="64" fill="#fff"/><rect x="11" y="37" width="13" height="12" rx="1.5" fill="#000" stroke="#000" stroke-width="5" stroke-linejoin="round"/><circle cx="55" cy="16" r="4.5" fill="#000" stroke="#000" stroke-width="3.4"/><circle cx="36" cy="22" r="2.1" fill="#000"/></mask></defs><g mask="url(#tb-hdr-cut)" fill="currentColor" stroke="currentColor"><path d="M25 55L36 20L47 55" fill="none" stroke-width="6" stroke-linejoin="round"/><rect x="6" y="53" width="52" height="5" stroke="none"/><path d="M19 39L53 5" stroke-width="5.5"/><path d="M52 6L55 16" fill="none" stroke-width="1.6"/></g><rect x="11" y="37" width="13" height="12" rx="1.5" fill="#F2652B"/><circle cx="55" cy="16" r="4.5" fill="#F2652B"/></svg>Trebuchet Builder</a><span class="beta" title="Trebuchet Builder is in beta: designs and numbers may change">Beta</span></h1><nav><a href="https://rocket.quiverdesignworks.net/" title="3D-printed model rockets">Rocket Builder</a><a href="https://quiverdesignworks.net/#apps" class="long">← Quiver Design Works</a><a href="supplies" target="_blank" title="String, counterweight fill, projectiles, filament and the optional bearings">Order <span class="long">Trebuchet </span>Supplies</a></nav><span class="units">units mm</span><button id="theme" type="button"></button></header>
 <main>
   <form id="form" autocomplete="off">
     <div id="modebar" role="group" aria-label="Mode">
@@ -325,12 +325,14 @@
       <label>Arm ratio (long : short) <input type="number" id="arm_ratio" name="arm_ratio" min="2" max="6" step="0.1"></label>
       <label class="check">Release at the best angle <input type="checkbox" id="auto_release" checked></label>
       <label>Release angle (°) <input type="number" id="release_angle" name="release_angle" min="5" max="120" step="1" disabled></label>
-      <p class="hint">Sling-to-arm angle when the ring slides off the pin: the pin's bend.</p>
+      <p class="hint">Sling-to-arm angle when the ring slides off: the release hook is printed at this angle.</p>
       <label>Start angle (° below level) <input type="number" id="start_angle" name="start_angle" min="25" max="70" step="1"></label>
       <label>Bucket width (mm) <input type="number" id="bucket_width" name="bucket_width" min="30" max="120" step="1"></label>
       <label>Arm thickness (mm) <input type="number" id="arm_thickness" name="arm_thickness" min="6" max="20" step="0.5"></label>
       <label>Axle <select id="axle" name="axle"></select></label>
       <label>Infill (for weights) <input type="number" id="infill" name="infill" min="0" max="1" step="0.05"></label>
+      <label>Clearance (mm, per side) <input type="number" id="clearance" name="clearance" min="0" max="0.6" step="0.05"></label>
+      <p class="hint">Added to every snap and pin fit. More if parts are too tight to push together, less if they're loose.</p>
     </fieldset>
 
     <div class="step"><span class="n">6</span>Build it</div>
@@ -356,7 +358,7 @@
         <button type="button" class="close" id="guideclose">Close</button>
         <h2>Trebuchet Builder: user guide</h2>
         <nav class="gnav" aria-label="Guide sections"><a href="#g-start">Quick start</a><a href="#g-what">What is a trebuchet?</a><a href="#g-how">How it works</a><a href="#g-parts">Parts</a><a href="#g-print">Printing</a><a href="#g-farther">Throw farther</a><a href="#g-tune">Tuning</a><a href="#g-science">Experiments</a><a href="#g-estimate">The estimate</a><a href="#g-terms">Key terms</a><a href="#g-safety">Safety</a><a href="#g-files">Your files</a></nav>
-        <p class="gsupport">Need bearings, bolts, string or something to throw? <a href="supplies" target="_blank">Order through my link here to support me!</a></p>
+        <p class="gsupport">Need string, a kitchen scale or something to throw? <a href="supplies" target="_blank">Order through my link here to support me!</a></p>
         <figure>
           <svg viewBox="0 0 520 200" aria-label="Side view of a trebuchet">
             <line x1="40" y1="180" x2="480" y2="180" stroke="currentColor" stroke-width="2" opacity=".4"/>
@@ -384,7 +386,7 @@
           <li><b>Design.</b> Work through the numbered steps on the left. The estimated throw under <b>Build</b> updates as you go.</li>
           <li><b>Build.</b> Press <b>Build</b>: the 3D model and a full report appear. Press <b>▶ Throw</b> to watch it swing, or open the test throw to see it to scale.</li>
           <li><b>Print.</b> Download the ZIP: the parts to print, a shopping list, the build steps and your design file.</li>
-          <li><b>Throw.</b> Put it together, tune the release pin and measure your throws. Compare them with the estimate.</li>
+          <li><b>Throw.</b> Snap it together, tune the release angle and measure your throws. Compare them with the estimate.</li>
         </ol>
         <p><b>Beginner</b> shows the six steps that matter most. <b>Advanced</b> adds the arm ratio, release angle, start angle, bucket and arm sizes, axle type and infill. Drag the handles between the panels to resize them (double-click a handle to reset it).</p>
 
@@ -401,33 +403,33 @@
               <li><b>Fire:</b> pull the trigger pin. The weight falls and the arm swings up.</li>
               <li><b>Drag:</b> the sling pulls the projectile along the trough, then lifts it.</li>
               <li><b>Whip:</b> the sling swings round the end of the arm, going faster than the arm itself, like the end of a whip.</li>
-              <li><b>Release:</b> the ring slides off the bent pin at the arm's tip and the projectile flies off (kinetic energy).</li>
+              <li><b>Release:</b> the ring slides off the hook at the arm's tip and the projectile flies off (kinetic energy).</li>
             </ol>
           </div>
         </div>
 
         <h3 id="g-parts">The parts of your trebuchet</h3>
         <dl class="cols2">
-          <dt>Frames (2)</dt><dd>The A-shaped sides. Each holds a skateboard bearing that the axle turns in.</dd>
-          <dt>Cross members (3) and trough</dt><dd>Join the frames at table level. The projectile and sling lie on the trough; the trigger post is on it too.</dd>
-          <dt>Arm</dt><dd>The long throwing stick. A hole for the axle, a hinge hole at the short end, a cord hole and the release-pin hole at the tip.</dd>
-          <dt>Bucket and lids</dt><dd>Holds the counterweight fill. It hangs from the short end of the arm on a bolt, so it swings freely.</dd>
-          <dt>Axle spacers (2)</dt><dd>Keep the arm in the middle of the axle.</dd>
-          <dt>Trigger pin</dt><dd>Holds the arm down through a cord loop. Pull it to fire.</dd>
-          <dt>Pin gauge</dt><dd>A wedge cut to the suggested release angle, for bending the release pin.</dd>
+          <dt>Frames (2, the same part)</dt><dd>The sides: a rail on the table and a tower holding the axle. The trigger hole is beside the axle; notches under the rail measure the sling cords.</dd>
+          <dt>Cross members (2) and deck</dt><dd>The members' split ends click through slots in both frames. The deck drops onto their pegs; the projectile and pouch lie on it.</dd>
+          <dt>Arm</dt><dd>The long throwing stick: axle hole, hinge hole at the short end, trigger hole near the axle, and the release hook and a cord hole at the tip.</dd>
+          <dt>Bucket and cap</dt><dd>Holds the counterweight (coins go in through the hole in the top). It hangs from the short end of the arm, so it swings freely.</dd>
+          <dt>Axle and hinge pins</dt><dd>Printed pins: push them through and the split end clicks behind the far side. Spacers and sleeves keep the arm in the middle.</dd>
+          <dt>Trigger pin</dt><dd>Goes through the frame into the arm and holds it down. Pull it (with a cord) to fire.</dd>
+          <dt>Sling pouch and ring</dt><dd>Two cords make the sling: the pouch cradles the ball, the ring slides off the release hook.</dd>
           <dt>Ball</dt><dd>A printable projectile. Print a few: they get lost.</dd>
         </dl>
-        <p>Besides the printed parts you need an M8 bolt, two 608 bearings, an M4 bolt, about 10 small screws, string, a scrap of leather, a small ring, a paper clip and the counterweight fill. The report's <b>What else you need</b> lists exact sizes for your design, with links.</p>
+        <p>Everything prints on one plate and snaps together: no screws, bolts or glue. Besides the printed parts you need string for the sling and trigger, and the counterweight (coins work). An M8 bolt and two 608 skateboard bearings are an option for a smoother axle. The report's <b>What else you need</b> lists it for your design, with links.</p>
 
         <div class="cols">
           <div>
             <h3 id="g-print">Printing tips</h3>
             <ul>
               <li>PLA is fine. PLA+ or PETG is tougher for the arm.</li>
-              <li>Every part is exported lying the way it should print, with no supports needed.</li>
-              <li>The arm and frames take the most force: 4 walls, 30–40% infill. Everything else: 2–3 walls, 15–20% infill.</li>
-              <li>The biggest parts are the frames and the trough. Step 2 checks they fit your bed; a longer arm needs a bigger printer.</li>
-              <li>Clean any stringy plastic out of the holes before you put it together. The bearings should press in firmly.</li>
+              <li>The ZIP has the whole kit laid out on one plate (<span class="eg">plate_1.3mf</span>), each part lying the way it should print, with no supports needed.</li>
+              <li>The arm and frames take the most force: 4 walls, 30–40% infill. Print the pins solid (100%). Everything else: 2–3 walls, 15–20% infill.</li>
+              <li>A bigger arm or more counterweight can spill onto a second plate; the report says so.</li>
+              <li>Clean any stringy plastic out of the holes and slots. If the snaps are too tight or loose for your printer, change <b>Clearance</b> (Advanced) and build again.</li>
             </ul>
           </div>
           <div>
@@ -437,8 +439,8 @@
               <dt>Weight ratio</dt><dd>Counterweight ÷ projectile. Above about 100 : 1 the arm can't swing much faster, so extra weight helps less and less.</dd>
               <dt>Arm ratio</dt><dd>Long side ÷ short side. Around 3.5–4.5 : 1 usually works best for a hinged counterweight.</dd>
               <dt>Sling length</dt><dd>A longer sling acts like a longer arm, but too long and it drags. Try 0.7–1.0 × the long side.</dd>
-              <dt>Release angle</dt><dd>When the ring slides off the pin. The report suggests the best angle; the pin gauge helps you bend it.</dd>
-              <dt>Friction</dt><dd>Bearings on the axle and a smooth trough help. A loose, wobbly machine wastes energy.</dd>
+              <dt>Release angle</dt><dd>When the ring slides off the hook. The report suggests the best angle, and the arm's hook is printed at it.</dd>
+              <dt>Friction</dt><dd>A smooth axle and deck help; the bearing option is smoothest. A loose, wobbly machine wastes energy.</dd>
             </dl>
           </div>
         </div>
@@ -446,11 +448,11 @@
         <h3 id="g-tune">Tuning and troubleshooting</h3>
         <table class="gtable">
           <tr><th>What happens</th><th>What to try</th></tr>
-          <tr><td>The ball goes straight up or backwards</td><td>It lets go too early. Bend the release pin <b>straighter</b> (smaller angle).</td></tr>
-          <tr><td>The ball slams into the table or floor in front</td><td>It lets go too late. Bend the pin <b>more</b> (bigger angle).</td></tr>
-          <tr><td>The ball doesn't leave the pouch</td><td>The ring is stuck: smooth the pin, use a smaller ring, or bend the pin a little more.</td></tr>
-          <tr><td>The arm swings slowly or stops</td><td>Too much friction: loosen the axle nut slightly; check the bearings are seated and the spacers aren't rubbing.</td></tr>
-          <tr><td>The bucket hits something</td><td>Check the hinge bolt is snug but the bucket swings freely; nothing should be inside the frames below the arm.</td></tr>
+          <tr><td>The ball goes straight up or backwards</td><td>It lets go too early. Set a <b>smaller</b> release angle (5° at a time) and reprint the arm.</td></tr>
+          <tr><td>The ball slams into the table or floor in front</td><td>It lets go too late. Set a <b>bigger</b> release angle and reprint the arm.</td></tr>
+          <tr><td>The ball doesn't leave the pouch</td><td>The ring is catching: smooth the hook with a file, or use a small metal split ring instead.</td></tr>
+          <tr><td>The arm swings slowly or stops</td><td>Too much friction: clean the holes, check the spacers aren't rubbing, or try a little more Clearance.</td></tr>
+          <tr><td>A snap is too tight or falls out</td><td>Change Clearance (Advanced) by 0.1 mm and reprint that part.</td></tr>
           <tr><td>Throws vary a lot</td><td>Lay the sling straight and flat every time, and use the same projectile. Take the middle of five throws.</td></tr>
           <tr><td>A part cracked</td><td>Reprint it with more walls and infill (or PETG), or use less counterweight.</td></tr>
         </table>
@@ -461,7 +463,7 @@
             <ul>
               <li><b>Counterweight:</b> throw with 200, 300 and 400 g. Does double the weight throw twice as far?</li>
               <li><b>Sling length:</b> try a short, medium and long sling. Which works best, and does it match the report's suggestion?</li>
-              <li><b>Release angle:</b> bend the pin in 10° steps and record where it lands. Compare with the release-angle chart.</li>
+              <li><b>Release angle:</b> print arms 10° apart and record where each lands. Compare with the release-angle chart.</li>
               <li><b>Projectiles:</b> a marble against a ping-pong ball. Which goes farther, and why? (Hint: air drag.)</li>
               <li><b>Real against model:</b> measure five throws from the axle, take the middle one, and see what percentage of the model's distance you get.</li>
             </ul>
@@ -475,12 +477,12 @@
 
         <h3 id="g-terms">Key terms</h3>
         <dl class="cols2">
-          <dt>Axle (pivot)</dt><dd>The bolt the arm swings on, held by the two frames.</dd>
+          <dt>Axle (pivot)</dt><dd>The pin the arm swings on, held by the two frames.</dd>
           <dt>Hinged counterweight</dt><dd>The weight hangs from a hinge instead of being fixed to the arm. It falls more straight down, so more of its energy reaches the projectile.</dd>
           <dt>Trough</dt><dd>The flat track the projectile slides along before the sling lifts it.</dd>
-          <dt>Release pin</dt><dd>A short bent pin at the tip of the arm. One end of the sling has a ring that slides off it to let go.</dd>
-          <dt>Release angle</dt><dd>The angle between the sling and the arm when the ring slides off: set by how far the pin is bent.</dd>
-          <dt>Trigger</dt><dd>A pin and cord loop that hold the arm down until you pull it.</dd>
+          <dt>Release hook</dt><dd>A short prong at the tip of the arm. One end of the sling has a ring that slides off it to let go.</dd>
+          <dt>Release angle</dt><dd>The angle between the sling and the arm when the ring slides off: set by the hook's angle.</dd>
+          <dt>Trigger</dt><dd>A pin through the frame into the arm that holds it down until you pull it.</dd>
           <dt>Potential energy</dt><dd>Energy stored by lifting something up. The raised counterweight has it.</dd>
           <dt>Kinetic energy</dt><dd>Energy of motion. The flying projectile has it.</dd>
           <dt>Efficiency</dt><dd>Kinetic energy of the projectile ÷ potential energy the weight gave up. Good trebuchets reach 60–75%.</dd>
@@ -500,7 +502,7 @@
           </div>
           <div>
             <h3 id="g-files">Your files</h3>
-            <p>The ZIP holds the STLs, <span class="eg">build_notes.txt</span> (shopping list, print settings, steps), <span class="eg">design.json</span> and the license. The files are for your personal use: print, build and change them for yourself, but don't share, upload or sell them. <a href="terms" target="_blank">Full terms</a>.</p>
+            <p>The ZIP holds the plate (<span class="eg">plate_1.3mf</span>), the STLs, <span class="eg">build_notes.txt</span> (shopping list, print settings, steps), <span class="eg">design.json</span> and the license. The files are for your personal use: print, build and change them for yourself, but don't share, upload or sell them. <a href="terms" target="_blank">Full terms</a>.</p>
             <p>Also by Quiver Design Works: <a href="https://rocket.quiverdesignworks.net/">Rocket Builder</a>, for 3D-printed model rockets.</p>
           </div>
         </div>
@@ -524,7 +526,7 @@ let OPTS = null, lastPlan = null, lastBuild = null;
 
 // ---------- form ----------
 const NUM_FIELDS = ['arm_length', 'arm_ratio', 'sling_ratio', 'cw_mass', 'projectile_diameter', 'projectile_mass',
-  'release_angle', 'start_angle', 'print_bed', 'infill', 'bucket_width', 'arm_thickness'];
+  'release_angle', 'start_angle', 'print_bed', 'infill', 'bucket_width', 'arm_thickness', 'clearance'];
 let projectile = 'printed_ball';
 function params() {
   const p = {};
@@ -590,7 +592,7 @@ function setMode(m) {
                                                 : 'Every setting. The numbered steps still apply.';
   if (m === 'beginner') {  // Beginner sends the defaults for everything it hides
     const d = OPTS.defaults;
-    for (const k of ['arm_ratio', 'start_angle', 'bucket_width', 'arm_thickness', 'infill']) $(k).value = d[k];
+    for (const k of ['arm_ratio', 'start_angle', 'bucket_width', 'arm_thickness', 'infill', 'clearance']) $(k).value = d[k];
     $('axle').value = d.axle; $('auto_release').checked = true; $('release_angle').disabled = true; $('release_angle').value = '';
     if (projectile === 'custom') projectile = d.projectile;
     renderProjectiles(); changed();
@@ -695,36 +697,63 @@ function buildRig(meshes, a) {
   const arm = new THREE.Group(); arm.position.set(0, 0, a.H); model.add(arm);
   const hinge0 = hingeAt(a, a.theta0);
   const bucket = new THREE.Group(); bucket.position.set(hinge0.x, 0, hinge0.z); model.add(bucket);
+  // The printed pouch rides with the ball; the cords are drawn as lines between
+  // where they tie on (the arm's tip hole, the release ring) and its two ends.
+  const S = a.sling || null;
+  const pouch = new THREE.Group(); model.add(pouch);
+  if (S) pouch.position.set(S.pouch0[0], 0, S.pouch0[1]);
   let ballMesh = null;
   for (const { mesh, role } of meshes) {
     if (role === 'arm') arm.attach(mesh);
     else if (role === 'bucket') bucket.attach(mesh);
     else if (role === 'projectile') ballMesh = mesh;
+    else if (role === 'sling') { if (S) pouch.attach(mesh); else mesh.visible = false; }
+    else if (role === 'cord') mesh.visible = false;  // drawn as lines that follow the throw
   }
   if (ballMesh) ballMesh.visible = false;  // replaced by a ball that moves
   const ball = new THREE.Mesh(new THREE.SphereGeometry(a.r_p, 24, 16), new THREE.MeshStandardMaterial({ color: 0xf2652b, roughness: 0.5 }));
   model.add(ball);
-  const sling = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]),
-    new THREE.LineBasicMaterial({ color: 0x6e6e73 }));
-  model.add(sling);
+  const cordMat = new THREE.LineBasicMaterial({ color: 0x8a6a3a });
+  const line = () => { const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]), cordMat); model.add(l); return l; };
+  const cords = S ? [line(), line()] : [line()];
   const pathPts = (a.path || []).map(([x, z]) => new THREE.Vector3(x * 1000, 0, z * 1000));
   const trail = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pathPts.length ? pathPts : [new THREE.Vector3()]),
     new THREE.LineDashedMaterial({ color: 0x3d8bfd, dashSize: 6, gapSize: 4 }));
   trail.computeLineDistances(); trail.visible = false; model.add(trail);
-  rig = { a, arm, bucket, ball, sling, trail, playing: false, t0: 0 };
+  rig = { a, arm, bucket, ball, cords, pouch, trail, playing: false, t0: 0 };
   pose(a.frames[0] || [0, a.theta0, a.psi0, 0]);
   $('play').disabled = !(a.frames && a.frames.length > 1);
 }
 function hingeAt(a, th) { return { x: -a.L2 * Math.cos(th), z: a.H - a.L2 * Math.sin(th) }; }
-function pose([, th, psi, sg]) {
-  const { a, arm, bucket, ball, sling } = rig;
+// A point (s along the arm, t across it toward the sling side) with the arm at angle th.
+function armPt(a, th, s, t) {
+  return new THREE.Vector3(s * Math.cos(th) - t * Math.sin(th), 0, a.H + s * Math.sin(th) + t * Math.cos(th));
+}
+function setSlingVisible(v) { rig.cords.forEach(c => { c.visible = v; }); rig.pouch.visible = v; }
+function pose([t, th, psi, sg]) {
+  const { a, arm, bucket, ball, cords, pouch } = rig;
   arm.rotation.y = -(th - a.theta0);
   const h = hingeAt(a, th);
   bucket.position.set(h.x, 0, h.z); bucket.rotation.y = -(psi - a.psi0);
-  const tip = new THREE.Vector3(a.L1 * Math.cos(th), 0, a.H + a.L1 * Math.sin(th));
+  const tip = armPt(a, th, a.L1, 0);
   const b = tip.clone().add(new THREE.Vector3(a.Ls * Math.cos(sg), 0, a.Ls * Math.sin(sg)));
   ball.position.copy(b);
-  sling.geometry.setFromPoints([tip, b]); sling.visible = true;
+  const S = a.sling;
+  if (!S) { cords[0].geometry.setFromPoints([tip, b]); setSlingVisible(true); invalidate(); return; }
+  // The pouch lies flat under the ball on the deck, then (as the sling lifts
+  // the ball) turns to wrap round its far side, square to the sling.
+  const sg0 = a.frames[0][3], w = Math.min(1, Math.max(0, (t || 0) / (S.liftoff_t || 0.05)));
+  const off0 = new THREE.Vector3(0, 0, S.pouch0[1] - (a.H + a.L1 * Math.sin(a.theta0) + a.Ls * Math.sin(sg0)));
+  const offW = new THREE.Vector3(a.r_p * Math.cos(sg), 0, a.r_p * Math.sin(sg));
+  const c = b.clone().add(off0.multiplyScalar(1 - w)).add(offW.multiplyScalar(w));
+  const phi = w * (sg + Math.PI / 2);
+  pouch.position.copy(c); pouch.rotation.y = -phi;
+  const ux = Math.cos(phi), uz = Math.sin(phi);
+  const back = c.clone().add(new THREE.Vector3(-S.hole * ux, 0, -S.hole * uz));
+  const front = c.clone().add(new THREE.Vector3(S.hole * ux, 0, S.hole * uz));
+  cords[0].geometry.setFromPoints([armPt(a, th, S.tip[0], S.tip[1]), back]);
+  cords[1].geometry.setFromPoints([armPt(a, th, S.ring[0], S.ring[1]), front]);
+  setSlingVisible(true);
   invalidate();
 }
 function stepThrow() {
@@ -739,7 +768,7 @@ function stepThrow() {
   }
   // After release: the ball follows the flight path (10 ms samples) for a while.
   const k = Math.floor((t - tRel) / 0.01), P = a.path;
-  rig.sling.visible = false; rig.trail.visible = true;
+  setSlingVisible(false); rig.trail.visible = true;  // the ring has slipped off: the sling stays with the arm
   if (P && k < P.length && t - tRel < 0.6) { rig.ball.position.set(P[k][0] * 1000, 0, P[k][1] * 1000); return true; }
   rig.playing = false;
   setTimeout(() => { if (rig && !rig.playing) { rig.trail.visible = false; pose(a.frames[0]); } }, 2500);
@@ -872,14 +901,14 @@ function showReport(r) {
       <tr><td>Efficiency</td><td class="n">${Math.round(t.efficiency * 100)}% of the weight's energy</td></tr>
       <tr><td>Peak pull on the sling</td><td class="n">${m1(t.sling_pull_n)} N (${Math.round(t.sling_pull_n / 9.81 * 1000)} g)</td></tr></table></div>`);
     cards.push(`<div class="card"><h3>Release angle</h3>
-      <p>The release pin is bent to <b>${Math.round(t.release_angle_deg)}°</b>${t.auto_release ? ', the best angle for this design' : ` (the best is ${Math.round(t.best_release_angle_deg)}°, ${m1(t.best_range_m)} m)`}. The printed gauge in the kit is cut to it.</p>
+      <p>The release hook on the arm's tip is printed at <b>${Math.round(t.release_angle_deg)}°</b>${t.auto_release ? ', the best angle for this design' : ` (the best is ${Math.round(t.best_release_angle_deg)}°, ${m1(t.best_range_m)} m)`}. To change it, build again with another angle and reprint the arm.</p>
       ${sweepSvg(t)}
       <p class="note">Distance by the angle between sling and arm when the ring slides off. Bigger angle = lets go earlier, higher shot.</p></div>`);
   } else {
     cards.push(`<div class="card bad"><h3>It won't throw yet</h3><p>${esc(t.problem)}</p></div>`);
   }
   cards.push(`<div class="orderrow">
-    <a class="supplies" href="supplies" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 11h11l2-8H6.2"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg><span>Order trebuchet supplies<small>Bearings, bolts, string, fill, filament</small></span></a>
+    <a class="supplies" href="supplies" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 11h11l2-8H6.2"/><circle cx="9" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg><span>Order trebuchet supplies<small>String, scale, projectiles, filament</small></span></a>
     <a class="throwpage" href="${throwLink()}" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 20h18M5 18q7-16 15-2"/><circle cx="20" cy="16" r="1.5" fill="currentColor"/></svg><span>Watch the test throw<small>The swing and the flight, to scale</small></span></a></div>`);
   cards.push(`<div class="card"><h3>Your trebuchet</h3><table>
     <tr><td>Size</td><td class="n">${s.base_length_mm} × ${s.width_mm} mm, ${s.height_mm} mm tall</td></tr>
@@ -900,7 +929,8 @@ function showReport(r) {
     const printed = r.parts.filter(p => !p.hardware);
     cards.push(`<div class="card wide"><h3>Parts to print</h3><table><tr><th>Part</th><th class="n">Qty</th><th class="n">Grams</th><th class="n">Size (mm)</th><th>How to print</th></tr>
       ${printed.map(p => `<tr><td><span class="sw" style="background:rgb(${p.color.map(c => Math.round(c * 255)).join(',')})"></span>${esc(p.name.replace(/_/g, ' '))}<br><span class="note">${esc(p.purpose)}</span></td><td class="n">${p.qty}</td><td class="n">${p.mass_g}</td><td class="n">${p.size_mm.join(' × ')}</td><td>${esc(p.print)}</td></tr>`).join('')}
-      <tr><td><b>Total plastic</b></td><td></td><td class="n"><b>${r.plastic_g}</b></td><td></td><td></td></tr></table></div>`);
+      <tr><td><b>Total plastic</b></td><td></td><td class="n"><b>${r.plastic_g}</b></td><td></td><td></td></tr></table>
+      <p class="note">${r.plates > 1 ? `Laid out on ${r.plates} plates` : 'Everything is laid out on one plate'} in the ZIP (plate_1.3mf): no supports, no screws or glue.</p></div>`);
   }
   const links = OPTS?.supply_links || {};
   cards.push(`<div class="card wide"><h3>What else you need</h3><table><tr><th class="n">Qty</th><th>Item</th><th>What to get</th><th>Why</th><th></th></tr>
