@@ -33,16 +33,16 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from trebgen.build import Plan, build as build_trebuchet, plan as plan_trebuchet
-from trebgen.export import glb, stl_bytes
+from trebgen.export import glb, plate_3mf, stl_bytes
 from trebgen.hardware import bill_of_materials
-from trebgen.instructions import PRINT_NOTES, SAFETY, assembly_steps
+from trebgen.instructions import PLATE_NOTE, PRINT_NOTES, SAFETY, assembly_steps
 from trebgen.params import AXLES, FILLS, PROJECTILES, DesignError, DesignParams, eff_density, in_sentence, projectile_of
 from trebgen.physics import REAL_WORLD
 
 import treb_supplies as supplies
 import treb_terms as terms
 
-GENERATOR_VERSION = "0.1.0"
+GENERATOR_VERSION = "0.2.0"
 SCHEMA_VERSION = 1
 HERE = Path(__file__).parent
 log = logging.getLogger("trebuchet")
@@ -52,21 +52,22 @@ app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
 
 
 class BuildRequest(BaseModel):
-    arm_length: float = Field(200, ge=120, le=400)
+    arm_length: float = Field(180, ge=120, le=400)
     arm_ratio: float = Field(4.0, ge=2, le=6)
     sling_ratio: float = Field(0.8, ge=0.4, le=1.4)
-    cw_mass: float = Field(350, ge=50, le=3000)
-    cw_fill: str = "steel_bb"
+    cw_mass: float = Field(300, ge=50, le=3000)
+    cw_fill: str = "coins"
     projectile: str = "printed_ball"
     projectile_diameter: float = Field(20, ge=5, le=60)
     projectile_mass: float = Field(4, ge=0.2, le=100)
     release_angle: float | None = Field(None, ge=5, le=120)
     start_angle: float = Field(45, ge=25, le=70)
-    axle: str = "608"
+    axle: str = "printed"
     print_bed: float = Field(220, ge=120, le=500)
     infill: float = Field(0.25, ge=0, le=1)
     bucket_width: float = Field(50, ge=30, le=120)
     arm_thickness: float = Field(10, ge=6, le=20)
+    clearance: float = Field(0.1, ge=0, le=0.6)  # extra fit clearance per side, for tight printers
 
     def design(self) -> DesignParams:
         return DesignParams(**self.model_dump())
@@ -140,7 +141,7 @@ def _summary(pl: Plan) -> dict:
     d_p, m_p = projectile_of(p)
     return {
         "axle_height_mm": round(d.H), "base_length_mm": round(d.x_front - d.x_back),
-        "width_mm": round(d.gap + 2 * p.frame_thickness),
+        "width_mm": round(d.gap + 2 * d.frame_t),
         "height_mm": round(max(d.H + 15.5, d.H + d.L2 * math.sin(d.alpha) + 7)),
         "long_arm_mm": round(d.L1), "short_arm_mm": round(d.L2), "sling_mm": round(d.Ls),
         "start_angle_deg": round(math.degrees(d.alpha)), "hinge_to_weight_mm": round(d.Lc),
@@ -178,7 +179,7 @@ def _advice(pl: Plan) -> list[dict]:
     if p.release_angle is not None and pl.throw.best_release_angle_deg is not None:
         gain = (pl.throw.best_range_m or 0) - base
         if gain > 0.05:
-            out.append({"change": f"Bend the release pin to {pl.throw.best_release_angle_deg:.0f}°",
+            out.append({"change": f"Set the release hook to {pl.throw.best_release_angle_deg:.0f}°",
                         "field": "release_angle", "value": pl.throw.best_release_angle_deg,
                         "range_m": round(pl.throw.best_range_m, 2)})
     candidates = {
@@ -310,7 +311,7 @@ def build_endpoint(req: BuildRequest, request: Request):
             "size_mm": [round(bb.size.X), round(bb.size.Y), round(bb.size.Z)],
         })
     printed = [x for x in parts if not x["hardware"]]
-    report = {**_report(pl), "parts": parts, "bed_problems": treb.bed_problems,
+    report = {**_report(pl), "parts": parts, "bed_problems": treb.bed_problems, "plates": len(treb.plates),
               "plastic_g": round(sum(x["mass_g"] * x["qty"] for x in printed)),
               "build_s": round(time.monotonic() - t0, 1), "advice": _advice(pl)}
     _builds[key] = {"treb": treb, "glb": preview, "report": report, "params": params, "stls": None}
@@ -341,12 +342,14 @@ def _notes(b: dict) -> str:
     if t["ok"]:
         L += [f"Estimated throw: {t['expected_m'][0]}-{t['expected_m'][1]} m on the table "
               f"(the model, without friction, says {t['range_m']} m).",
-              f"Release: pin bent to {s['pin_angle_deg']}°, about {t['release_speed_ms']} m/s at {t['launch_angle_deg']}° up; "
+              f"Release: hook set to {s['pin_angle_deg']}°, about {t['release_speed_ms']} m/s at {t['launch_angle_deg']}° up; "
               f"peak height {t['peak_height_m']} m, {t['flight_time_s']} s in the air.",
               f"Efficiency: {round(100 * t['efficiency'])}% of the counterweight's drop ends up in the projectile."]
     else:
         L += [f"Throw: {t['problem']}"]
     L += [f"Note: {n}" for n in r["notes"]]
+    L += ["", PLATE_NOTE if r.get("plates", 1) == 1 else
+          f"The parts are laid out on {r['plates']} plates (plate_1.3mf, plate_2.3mf, ...). " + PLATE_NOTE.split(". ", 1)[1]]
     L += ["", "Parts to print (STLs are in print orientation, on z = 0):"]
     L += [f"  {p['name']} × {p['qty']}: {p['mass_g']} g each. {p['print']}" for p in r["parts"] if not p["hardware"]]
     L += [f"  Plastic: about {r['plastic_g']} g.", "", "What else you need:"]
@@ -365,11 +368,14 @@ def download(build_id: str):
     if b["stls"] is None:
         with _lock:
             b["stls"] = {p.name: terms.stl_with_header(stl_bytes(p.local)) for p in b["treb"].printed}
+            b["plates"] = [plate_3mf(pl) for pl in b["treb"].plates]
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
         for name, data in b["stls"].items():
             qty = next(p.qty for p in b["treb"].printed if p.name == name)
             z.writestr(f"{name}{f'_x{qty}' if qty > 1 else ''}.stl", data)
+        for n, data in enumerate(b.get("plates") or [], 1):
+            z.writestr(f"plate_{n}.3mf", data)
         z.writestr("build_notes.txt", _notes(b))
         z.writestr("LICENSE.txt", terms.LICENSE_TEXT)
         z.writestr("design.json", json.dumps({"generatorVersion": GENERATOR_VERSION, "schemaVersion": SCHEMA_VERSION,
