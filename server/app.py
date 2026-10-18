@@ -235,14 +235,14 @@ def healthz():
 
 @app.get("/", response_class=HTMLResponse)
 def index():
-    return (HERE / "static" / "index.html").read_text()
+    return (HERE / "static" / "index.html").read_text(encoding="utf-8")
 
 
 @app.get("/throw", response_class=HTMLResponse)
 def throw_page():
     """Test throw: the arm swing and the arc, from /api/plan. Takes any design
     field in the query string (/throw?cw_mass=500&arm_length=250)."""
-    return (HERE / "static" / "throw.html").read_text()
+    return (HERE / "static" / "throw.html").read_text(encoding="utf-8")
 
 
 @app.get("/supplies", response_class=HTMLResponse)
