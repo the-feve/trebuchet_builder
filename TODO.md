@@ -29,6 +29,8 @@ Steps for building Trebuchet Builder up from a small printable kit. Tick them of
 - [ ] Owner: pick specific products for the search-link items in `server/treb_gear.json` (search → asin)
 - [x] Rocket Builder look: resizable panels, builder switcher in the header, full user guide (2026-10-15)
 - [x] Listed in quiverdesignworks.net Apps (2026-10-15)
+- [x] Own page, marked beta, Rocket Builder brand (fonts, mark, favicon, colours); builder switcher replaced by links (2026-10-18)
+- [x] rocket-builder-web: switcher dropped, links here as "Trebuchet Builder (beta)" (2026-10-18)
 - [ ] Saved designs, share links, accounts (reuse rocket-builder-web `designs.py`, `accounts.py`)
 - [ ] Printed-kit orders through Stripe (reuse rocket-builder-web `orders.py`, `shop.py`; `metadata.store` tag for this store)
 - [ ] Link from quiverdesignworks.net apps list

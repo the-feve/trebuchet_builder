@@ -92,7 +92,7 @@ def test_default_parts_are_valid_flat_and_supportless(default):
 
 
 def test_no_hardware_in_the_default_kit(default):
-    assert not [p for p in default.parts if p.hardware]
+    assert not [p for p in default.parts if p.hardware and p.role != "cord"]  # the cords are string
     keys = {i["key"] for i in bill_of_materials(default.plan.params, default.plan.derived, default.plan.pin_angle)}
     assert "m8_bolt" not in keys and "608_bearing" not in keys
     assert {"sling_cord", "trigger_cord", "fill_coins", "safety_glasses"} <= keys
@@ -104,7 +104,7 @@ def test_assembled_parts_dont_intersect(kw):
     """The first versions were valid solids that went through each other (the
     bucket through the axle spacers, then the arm through the bucket)."""
     t = build(DesignParams(**kw), layout=False)
-    placed = [(f"{p.name}#{i}", s) for p in t.parts for i, s in enumerate(p.placements)]
+    placed = [(f"{p.name}#{i}", s) for p in t.parts if p.role != "cord" for i, s in enumerate(p.placements)]
     clash = [(a, b) for (a, sa), (b, sb) in itertools.combinations(placed, 2) if (sa & sb).volume > 0.5]
     assert not clash, clash
 
@@ -207,3 +207,19 @@ def test_bill_of_materials_options():
         pl = plan(DesignParams(axle=axle))
         keys = {i["key"] for i in bill_of_materials(pl.params, pl.derived, pl.pin_angle)}
         assert want <= keys
+
+
+def test_sling_cords_join_the_arm_to_the_pouch(default):
+    """The preview shows how the sling ties on: the tip cord from the hole by
+    the tip to the pouch's back end, the ring cord from the release ring's
+    tab (on the hook) to its front end."""
+    from trebgen.parts import arm_point, sling_anchors
+    from build123d import Vector
+    p, d = default.plan.params, default.plan.derived
+    parts = {x.name: x for x in default.parts}
+    an = sling_anchors(p, d, default.plan.pin_angle)
+    arm, ring, pouch = parts["Arm"].placements[0], parts["Release_Ring"].placements[0], parts["Sling_Pouch"].placements[0]
+    assert arm.distance_to(Vector(*arm_point(d, *an["tip"]))) < 1.6      # in the tip hole (3 mm)
+    assert ring.distance_to(Vector(*arm_point(d, *an["ring"]))) < 1.6    # in the ring's tab hole
+    cords = parts["Sling_Cords"].placements
+    assert len(cords) == 2 and all(c.distance_to(pouch) < 0.7 for c in cords)

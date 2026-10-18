@@ -35,6 +35,7 @@ from pydantic import BaseModel, Field
 from trebgen.build import Plan, build as build_trebuchet, plan as plan_trebuchet
 from trebgen.export import glb, plate_3mf, stl_bytes
 from trebgen.hardware import bill_of_materials
+from trebgen.parts import sling_anchors
 from trebgen.instructions import PLATE_NOTE, PRINT_NOTES, SAFETY, assembly_steps
 from trebgen.params import AXLES, FILLS, PROJECTILES, DesignError, DesignParams, eff_density, in_sentence, projectile_of
 from trebgen.physics import REAL_WORLD
@@ -157,8 +158,13 @@ def _summary(pl: Plan) -> dict:
 def _anim(pl: Plan) -> dict:
     """What the page needs to play the throw on the 3D model (mm, rad)."""
     m, d = pl.machine, pl.derived
+    an = sling_anchors(pl.params, d, pl.pin_angle)
     return {"H": d.H, "L1": d.L1, "L2": d.L2, "Lc": d.Lc, "Ls": d.Ls, "r_p": d.r_p,
-            "theta0": math.pi + d.alpha, "psi0": -math.pi / 2, "frames": pl.throw.frames, "path": pl.throw.path}
+            "theta0": math.pi + d.alpha, "psi0": -math.pi / 2, "frames": pl.throw.frames, "path": pl.throw.path,
+            # The sling as built: where each cord ties on the arm ((s, t) in the arm's frame), the pouch at
+            # rest (centre x, underside z) with its cord holes, and when the sling lifts the ball off the deck.
+            "sling": {"tip": an["tip"][:2], "ring": an["ring"][:2], "hole": an["pouch_holes"][1],
+                      "pouch0": [d.x_p0, d.z_trough], "liftoff_t": pl.throw.liftoff_t}}
 
 
 ADVICE_TRIES = [

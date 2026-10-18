@@ -42,6 +42,7 @@ PART_COLORS = {
     "Ball": (0.95, 0.95, 0.95),
 }
 HW_COLOR = (0.62, 0.64, 0.68)
+CORD_COLOR = (0.93, 0.93, 0.88)
 
 CORD_HOLE = 3.0
 TENON_BARB = 1.0      # tenon barb, per side: 0.6 mm of catch past a 0.4 mm slot clearance
@@ -66,6 +67,8 @@ class Part:
 
     @property
     def color(self):
+        if self.role == "cord":
+            return CORD_COLOR
         return HW_COLOR if self.hardware else PART_COLORS.get(self.name, (0.7, 0.7, 0.7))
 
 
@@ -426,6 +429,40 @@ def trigger_pin(p: DesignParams, d: Derived) -> Part:
 
 
 # ---------------------------------------------------------------- sling
+TIP_HOLE_BACK = 5.0   # the tip cord's hole, this far back from the arm's tip (L1)
+RING_ALONG = 10.0     # the release ring sits this far out along the hook
+RING_TAB = 13.0       # its cord hole, this far from its centre (across the arm)
+
+
+def sling_anchors(p: DesignParams, d: Derived, pin_angle: float) -> dict:
+    """Where the two sling cords tie on at the arm's end, in the arm's frame:
+    (s along the arm from the axle, t across it toward the sling side, y
+    along the axle). The tip cord ties through the hole near the tip; the
+    ring cord ties to the release ring's tab while the ring sits on the hook."""
+    ang = math.radians(max(10.0, min(80.0, pin_angle)))
+    ring_s, ring_t = d.L1 + 1.0 + RING_ALONG * math.cos(ang), RING_ALONG * math.sin(ang)
+    # The ring lies across the hook, its tab pointing along the axle (-y).
+    ring_y = -(PRONG_T / 2 + RING_TAB - p.arm_thickness / 2)
+    return {"tip": (d.L1 - TIP_HOLE_BACK, 0.0, 0.0), "ring": (ring_s, ring_t, ring_y),
+            "pouch_holes": (-d.sling["cord_hole_off"], d.sling["cord_hole_off"])}
+
+
+def arm_point(d: Derived, s: float, t: float, y: float = 0.0, theta: float | None = None):
+    """World position of a point (s, t, y) on the arm with the long side at
+    angle theta (rest if None)."""
+    th = math.pi + d.alpha if theta is None else theta
+    return (s * math.cos(th) - t * math.sin(th), y, d.H + s * math.sin(th) + t * math.cos(th))
+
+
+def _cord(a, b, r=0.6):
+    """A straight piece of string from a to b (preview only)."""
+    ax, ay, az = a
+    bx, by, bz = b
+    L = math.dist(a, b)
+    return Cylinder(r, L, align=(Align.CENTER, Align.CENTER, Align.MIN)).moved(
+        Location(Plane(origin=a, z_dir=((bx - ax) / L, (by - ay) / L, (bz - az) / L))))
+
+
 def sling_parts(p: DesignParams, d: Derived, pin_angle: float) -> list[Part]:
     s = d.sling
     L, w, t = s["pouch_L"], s["pouch_w"], 1.2
@@ -441,18 +478,26 @@ def sling_parts(p: DesignParams, d: Derived, pin_angle: float) -> list[Part]:
     pouch_p = pouch.translate((d.x_p0, 0, d.z_trough))
 
     ring = _disc(0, 0, 7.5, 2.4) - _hole_z(0, 0, 9.5)
-    ring += _rect(6, 13, -3.5, 3.5, 2.4) + _disc(13, 0, 3.5, 2.4)
-    ring -= _hole_z(13, 0, CORD_HOLE)
+    ring += _rect(6, RING_TAB, -3.5, 3.5, 2.4) + _disc(RING_TAB, 0, 3.5, 2.4)
+    ring -= _hole_z(RING_TAB, 0, CORD_HOLE)
     ang = math.radians(max(10.0, min(80.0, pin_angle)))
     ux, uy = math.cos(ang), math.sin(ang)
-    centre = (d.L1 + 1.0 + 10.0 * ux, 10.0 * uy, PRONG_T / 2)
+    centre = (d.L1 + 1.0 + RING_ALONG * ux, RING_ALONG * uy, PRONG_T / 2)
     on_arm = ring.translate((0, 0, -1.2)).moved(Location(Plane(origin=centre, x_dir=(0, 0, 1), z_dir=(ux, uy, 0))))
     ring_p = _arm_place(on_arm, p, d)
 
+    # The two cords, laid as at rest: tip hole to the pouch's back end, ring
+    # tab to its front end (string, so preview only: the page draws them as
+    # lines that follow the throw).
+    an = sling_anchors(p, d, pin_angle)
+    z_hole = d.z_trough + 1.2
+    back, front = (d.x_p0 + an["pouch_holes"][0], 0.0, z_hole), (d.x_p0 + an["pouch_holes"][1], 0.0, z_hole)
+    cords = [_cord(arm_point(d, *an["tip"]), back), _cord(arm_point(d, *an["ring"]), front)]
     return [
         Part("Sling_Pouch", pouch, [pouch_p], role="sling",
              purpose="Cradles the projectile; a cord ties through each end"),
         Part("Release_Ring", ring, [ring_p], role="arm", purpose="On the ring cord; slips off the release hook"),
+        Part("Sling_Cords", cords[0], cords, role="cord", qty=2, hardware=True),
     ]
 
 
